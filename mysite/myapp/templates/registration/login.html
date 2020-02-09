@@ -9,39 +9,40 @@
 <link rel="stylesheet" href="{% static "css/foundation.css" %}">
 <link rel="stylesheet" href="{% static "css/app.css" %}">
 
-{% block css %}
-{% endblock %}
 
 </head>
 <body>
 
-
 <nav class="hover-underline-menu" data-menu-underline-from-center>
   <ul class="menu align-left">
     <li><a href="/">Home</a></li>
-    {% block list %}
-    {% endblock %}
-    {% if user.is_authenticated %}
-    <li class="userRight"><a >Hi, {{user.username}}</a></li>
-    <li class="loginRight"><a href="{{ logout }}">Logout</a></li>
-    {% else %}
-    <li class="loginRight"><a href="{{ login }}">Login</a></li>
-    {% endif %}
-
   </ul>
 </nav>
 
+<!--{% block title %}Login{% endblock %}-->
+<div class="grid-x grid-padding-x">
+  <div class="large-4 medium-4 small-12 large-offset-4 medium-offset-4 cell">
+    <h3 class="text-center">Login</h3>
+    <form action="/login/" method="post">
+        {% csrf_token %}
 
-{% block content %}
-{% endblock %}
+        {{ form.errors }}
+        <label>{{ form.username.label_tag }}</label>
+        {{ form.username }}
+        <label>{{ form.password.label_tag }}</label>
+        {{ form.password }}
+        <input type="submit" class="button expanded" value="Login" />
+        <a href="/register/" class="secondary button expanded">Register</a>
+        <input type="hidden" name="next" value="{{ request.GET.next }}" />
+    </form>
+  </div>
+</div>
 
 <script src="{% static "js/vendor/jquery.js" %}"></script>
 <script src="{% static "js/vendor/what-input.js" %}"></script>
 <script src="{% static "js/vendor/foundation.js" %}"></script>
 <script src="{% static "js/app.js" %}"></script>
 
-{% block scripts %}
-{% endblock %}
 
 </body>
 </html>
