@@ -1,5 +1,6 @@
 from django.db import models
-from django.contrib.auth.models import user
+from django.contrib.auth.models import User
+from django.contrib.postgres.fields import JSONField
 
 class Site(models.Model):
 	playerList = JSONField()
@@ -18,7 +19,7 @@ class League(models.Model):
 	def __str__(self):
 		return self.leagueName
 	
-class Team(models.model):
+class Team(models.Model):
 	teamName = models.CharField(max_length=20)
 	owner = models.ForeignKey(User, on_delete=models.CASCADE)
 	league = models.ForeignKey(League, on_delete=models.CASCADE)
@@ -27,7 +28,7 @@ class Team(models.model):
 	player3 = models.IntegerField()
 	player4 = models.IntegerField()
 
-	def __str__(self)
+	def __str__(self):
 		return self.teamName
 
 class UnavailablePlayers(models.Model):

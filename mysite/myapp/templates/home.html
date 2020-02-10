@@ -9,4 +9,30 @@
 </p>
 
 
+<!--
+<h3>Player Data</h3>
+<p>Player Name: {{firstName}} {{lastName}}</p>
+<p>Weight: {{playerWeight}}</p>
+<p>PlayerID: {{playerID}}</p>
+-->
+<!--<p>This information {{is_cached|yesno:"was,wasn't"}} cached.</p>
+-->
+
+<h3>Search for a player</h3>
+<form method="get">
+	First Name:<input type="text" name="first">
+	Last Name:<input type="text" name="last">
+	<button type="submit">search</button>
+</form>
+{% if player %}
+	<p>{{ player.FirstName }} {{ player.LastName }}</p>
+	<p>PlayerID: {{player.PlayerID}}</p>
+	<p>Weight: {{player.Weight}}</p>
+	<p>Swings: {{player.Swings}}</p>
+	<p>PGA Debut: {{player.PgaDebut}}</p>
+	<p>Country: {{player.Country}}</p>
+{% endif %}
+
+
+
 {% endblock %}
