@@ -13,7 +13,10 @@ class League(models.Model):
 	leagueName = models.CharField(max_length=60)
 	leagueDescription = models.CharField(max_length=500)
 	joinKey = models.CharField(max_length=20)
-	commisioner = models.ForeignKey(User,on_delete=models.CASCADE)
+	commissioner = models.ForeignKey(User,on_delete=models.CASCADE)
+	leagueImage = models.ImageField(
+		max_length=144,
+		upload_to='uploads/%Y/%m/%d')
 	
 	
 	def __str__(self):
@@ -23,10 +26,13 @@ class Team(models.Model):
 	teamName = models.CharField(max_length=20)
 	owner = models.ForeignKey(User, on_delete=models.CASCADE)
 	league = models.ForeignKey(League, on_delete=models.CASCADE)
-	player1 = models.IntegerField()
-	player2 = models.IntegerField()
-	player3 = models.IntegerField()
-	player4 = models.IntegerField()
+	teamImage = models.ImageField(
+		max_length=144,
+		upload_to='uploads/%Y/%m/%d')
+	player1 = models.IntegerField(null=True)
+	player2 = models.IntegerField(null=True)
+	player3 = models.IntegerField(null=True)
+	player4 = models.IntegerField(null=True)
 
 	def __str__(self):
 		return self.teamName

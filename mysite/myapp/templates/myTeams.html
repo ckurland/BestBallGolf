@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>{{ opener }}</h1>
+
+
+{% if teamList %}
+	{% for o in teamList %}
+		<h4>Team Name: {{ o.teamName }}</h4>
+		<h4>League Name: {{ o.leagueName }}</h4>
+		<br><br><br>
+	{% endfor %}
+{% else %}
+	<h4>Your teams will show up here.</h4>
+{% endif %}
+
+
+
+{% endblock %}

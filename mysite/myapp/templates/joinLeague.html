@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+
+
+<div class = "grid-x grid-padding-x">
+	<div class="large-4 medium-4 small-12 large-offset-4 medium-offset-4 cell">
+		<h1 class="text-center">{{opener}}</h1>
+		<form method="get">
+			Join Key:<input type="text" name="joinKey">
+			<button type="submit">Join</button>
+		</form>
+
+	</div>
+</div>
+
+
+
+{% endblock %}
