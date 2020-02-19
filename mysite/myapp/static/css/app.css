@@ -32,4 +32,11 @@
   transition: all 0.5s ease;
 }
 
+.team {
+  border: 2px solid black;
+}
+.leagueBanner {
+  background-color: gray;
+}
+
 

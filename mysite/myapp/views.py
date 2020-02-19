@@ -134,6 +134,7 @@ def myTeams(request):
 			teamList += [{
 			"teamName":t_q.teamName,
 			"leagueName":t_q.league.leagueName,
+			"leagueID":t_q.league.id,
 			"teamImage":t_q.teamImage
 			}]
 		
@@ -144,12 +145,59 @@ def myTeams(request):
 			"opener":"My Teams",
 			"login":"/login/",
  			"logout":"/logout/",
+			"league":"/leagueHome/",
  			"createLeague":"/createLeague/",
  			"joinLeague":"/joinLeague/",
 			"myTeams":"/myTeams/",
 			"teamList":teamList,
 	}
 	return render(request, "myTeams.html", context=context)
+
+@login_required(login_url='/login/')
+def leagueHome(request,instance_id):
+	instance = models.League.objects.get(id=instance_id)
+	team = models.Team.objects.get(owner=request.user,league=instance)
+
+
+	context = {
+			"title":"League Homepage",
+			"opener":instance.leagueName +" Homepage",
+			"initialStatement":instance.leagueDescription,
+			"login":"/login/",
+ 			"logout":"/logout/",
+			"league":"/leagueHome/"+ str(instance_id)+"/",
+			"myTeamLeague":"/myTeam/"+ str(team.id)+"/",
+ 			"createLeague":"/createLeague/",
+ 			"joinLeague":"/joinLeague/",
+			"myTeams":"/myTeams/",
+	}
+	return render(request, "league/home.html", context=context)
+
+@login_required(login_url='/login/')
+def leagueMyTeam(request,instance_id):
+	instance = models.Team.objects.get(id=instance_id)
+	team = {
+			"teamName":instance.teamName,
+			"leagueID":instance.league.id,
+			"teamImage":instance.teamImage
+			}
+		
+	context = {
+			"title":"My Team",
+			"initialStatement":"Here is where all of the team stuff will go.",
+			"login":"/login/",
+ 			"logout":"/logout/",
+			"league":"/leagueHome/"+str(instance.league.id)+"/",
+ 			"createLeague":"/createLeague/",
+ 			"joinLeague":"/joinLeague/",
+			"myTeamLeague":"/myTeam/"+ str(instance_id)+"/",
+			"myTeams":"/myTeams/",
+			"team":team,
+	}
+	return render(request, "league/myTeam.html", context=context)
+
+
+
 
 
 def register(request):

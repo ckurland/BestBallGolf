@@ -10,5 +10,7 @@ urlpatterns = [
     path('myTeams/', views.myTeams),
     path('joinLeague/', views.joinLeague),
     path('createTeam/<int:instance_id>/', views.createTeam),
+    path('leagueHome/<int:instance_id>/', views.leagueHome),
+    path('myTeam/<int:instance_id>/', views.leagueMyTeam),
     path('register/', views.register),
 ]

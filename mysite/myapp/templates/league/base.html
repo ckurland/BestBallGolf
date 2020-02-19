@@ -1,0 +1,83 @@
+{% load static %}
+<!DOCTYPE html>
+<html calss="no-js" lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="x-ua-compatible" content="ie=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{title}}</title>
+<link rel="stylesheet" href="{% static "css/foundation.css" %}">
+<link rel="stylesheet" href="{% static "css/app.css" %}">
+
+{% block css %}
+{% endblock %}
+
+</head>
+<body>
+
+
+<nav class="hover-underline-menu" data-menu-underline-from-center>
+  <ul class="menu align-left">
+    <li><a href="/">Home</a></li>
+    <li><a href="{{ myTeams }}">My Teams</a></li>
+    <li><a href="{{ createLeague }}">Create League</a></li>
+    <li><a href="{{ joinLeague }}">Join League</a></li>
+    {% block list %}
+    {% endblock %}
+    {% if user.is_authenticated %}
+    <li class="userRight"><a >Hi, {{user.username}}</a></li>
+    <li class="loginRight"><a href="{{ logout }}">Logout</a></li>
+    {% else %}
+    <li class="loginRight"><a href="{{ login }}">Login</a></li>
+    {% endif %}
+
+  </ul>
+</nav>
+
+<!-- https://get.foundation/building-blocks/blocks/topbar-center-logo.html -->
+<!-- mobile nav bar -->
+<div class="title-bar topbar-center-logo-mobile" data-responsive-toggle="topbar-center-logo" data-hide-for="medium">
+  <div class="title-bar-left">
+<!--
+    <div class="title-bar-title"><img src="https://placehold.it/100x39" alt="" /></div>
+-->
+  </div>
+  <div class="title-bar-right">
+    <button class="menu-icon" type="button" data-toggle="topbar-center-logo"></button>
+  </div>
+</div>
+<!-- /mobile nav bar -->
+
+<!-- medium and larger nav bar -->
+<div class="top-bar topbar-center-logo" id="topbar-center-logo">
+  <div class="top-bar-left">
+    <ul class="menu vertical medium-horizontal">
+      <li><a href="{{league}}">League Home</a></li>
+      <li><a href="{{myTeamLeague}}">My Team</a></li>
+    </ul>
+  </div>
+  <div class="top-bar-center">
+  </div>
+  <div class="top-bar-right">
+    <ul class="menu vertical medium-horizontal">
+    </ul>
+  </div>
+</div>
+<!-- /medium and larger nav bar -->
+
+
+
+
+{% block content %}
+{% endblock %}
+
+<script src="{% static "js/vendor/jquery.js" %}"></script>
+<script src="{% static "js/vendor/what-input.js" %}"></script>
+<script src="{% static "js/vendor/foundation.js" %}"></script>
+<script src="{% static "js/app.js" %}"></script>
+
+{% block scripts %}
+{% endblock %}
+
+</body>
+</html>

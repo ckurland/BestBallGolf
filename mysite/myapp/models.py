@@ -12,7 +12,7 @@ class Site(models.Model):
 class League(models.Model):
 	leagueName = models.CharField(max_length=60)
 	leagueDescription = models.CharField(max_length=500)
-	joinKey = models.CharField(max_length=20)
+	joinKey = models.CharField(max_length=20,unique=True)
 	commissioner = models.ForeignKey(User,on_delete=models.CASCADE)
 	leagueImage = models.ImageField(
 		max_length=144,

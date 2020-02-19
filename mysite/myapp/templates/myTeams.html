@@ -7,9 +7,13 @@
 
 {% if teamList %}
 	{% for o in teamList %}
-		<h4>Team Name: {{ o.teamName }}</h4>
-		<h4>League Name: {{ o.leagueName }}</h4>
-		<br><br><br>
+		<a href="{{ league }}{{o.leagueID}}">
+		<div class="team">
+			<h4>Team Name: {{ o.teamName }}</h4>
+			<h4>League Name: {{ o.leagueName }}</h4>
+		</div>
+		</a>
+		<br><br>
 	{% endfor %}
 {% else %}
 	<h4>Your teams will show up here.</h4>
