@@ -226,12 +226,20 @@ def leagueMyTeam(request,instance_id):
 			}
 	if team["player1"] is None:
 		pAdd["p1"] = "Add"
+	else:
+		pAdd["p1"] = "Swap"
 	if team["player2"] is None:
 		pAdd["p2"] = "Add"
+	else:
+		pAdd["p2"] = "Swap"
 	if team["player3"] is None:
 		pAdd["p3"] = "Add"
+	else:
+		pAdd["p3"] = "Swap"
 	if team["player4"] is None:
 		pAdd["p4"] = "Add"
+	else:
+		pAdd["p4"] = "Swap"
 		
 	context = {
 			"title":"My Team",
@@ -250,7 +258,7 @@ def leagueMyTeam(request,instance_id):
 	return render(request, "league/myTeam.html", context=context)
 
 @login_required(login_url='/login/')
-def leaguePlayers(request,instance_id,player):
+def leaguePlayers(request,instance_id,player,page=0):
 	#instance = models.League.objects.get(id=instance_id)
 	instance = models.Team.objects.get(id=instance_id)
 	#team = models.Team.objects.get(owner=request.user,league=instance)
@@ -259,9 +267,16 @@ def leaguePlayers(request,instance_id,player):
 
 	if 'pID' in request.GET:
 		pID = request.GET['pID']
-		instance.player1 = pID
+		if player == 1:
+			instance.player1 = pID
+		if player == 2:
+			instance.player2 = pID
+		if player == 3:
+			instance.player3 = pID
+		if player == 4:
+			instance.player4 = pID
 		instance.save()
-		return redirect("/myteam/"+str(instance_id)+"/")
+		return redirect("/myTeam/"+str(instance_id)+"/")
 
 	context = {
 			"title":"Players",
@@ -275,7 +290,7 @@ def leaguePlayers(request,instance_id,player):
  			"joinLeague":"/joinLeague/",
 			"myTeamLeague":"/myTeam/"+ str(instance_id)+"/",
 			"myTeams":"/myTeams/",
-			"players":playerData,
+			"players":playerData[page*10:(page*10+10)],
 	}
 	return render(request, "league/players.html", context=context)
 
