@@ -10,22 +10,53 @@ from . import models
 from . import forms
 
 """
-response = requests.get('https://api.sportsdata.io/golf/v2/json/Players?key=%s' % keyStore.key)
+playerJson = requests.get('https://api.sportsdata.io/golf/v2/json/Players?key=%s' % keyStore.key)
 playerData = response.json()
-print("Lookup")
 """
 
-def home(request):
-
+def playerCached(request):
 	is_cached = ('playerData' in request.session)
 
-	"""
 	if not is_cached:
+		print("Not Cached")
 		response = requests.get('https://api.sportsdata.io/golf/v2/json/Players?key=%s' % keyStore.key)
 		request.session['playerData'] = response.json()
 
 	playerData = request.session['playerData']
+	return playerData
+	
+
+def home(request):
+
+	"""
+	siteJson = models.Site.objects.all().first()
+	if siteJson is None:
+		#playerJson = requests.get('https://api.sportsdata.io/golf/v2/json/Players?key=%s' % keyStore.key)
+		pData = {"the":"one"}
+		#pData = playerJson.json()
+		st = models.Site(playerList = pData)
+		st.save()
+		siteJson = models.Site.objects.all().first()
+
+	playerData = siteJson.playerList
+	"""
+	
+
+	"""
+	is_cached = ('playerData' in request.session)
+
+	if not is_cached:
+		print("Not Cached")
+		response = requests.get('https://api.sportsdata.io/golf/v2/json/Players?key=%s' % keyStore.key)
+		request.session['playerData'] = response.json()
+
+	playerData = request.session['playerData']
+	"""
+	playerData = playerCached(request)
+
+
 	player = {}
+
 	if 'first' in request.GET:
 		if 'last' in request.GET:
 			first = request.GET['first']
@@ -34,7 +65,8 @@ def home(request):
 				if players['FirstName'] == first and players['LastName'] == last:
 					player = players
 					break
-	"""
+
+
 	context = {
 			"title":"Best Ball",
 			"opener":"Welcome to the Golf Best Ball Site",
@@ -44,8 +76,8 @@ def home(request):
  			"createLeague":"/createLeague/",
  			"joinLeague":"/joinLeague/",
 			"myTeams":"/myTeams/",
-			#"player":player,
-			"is_cached":is_cached,
+			"player":player,
+			#"is_cached":is_cached,
 	}
 	return render(request, "home.html", context=context)
 
@@ -166,6 +198,7 @@ def leagueHome(request,instance_id):
 			"login":"/login/",
  			"logout":"/logout/",
 			"league":"/leagueHome/"+ str(instance_id)+"/",
+			#"playersLeague":"/players/"+ str(instance_id)+"/",
 			"myTeamLeague":"/myTeam/"+ str(team.id)+"/",
  			"createLeague":"/createLeague/",
  			"joinLeague":"/joinLeague/",
@@ -179,8 +212,26 @@ def leagueMyTeam(request,instance_id):
 	team = {
 			"teamName":instance.teamName,
 			"leagueID":instance.league.id,
-			"teamImage":instance.teamImage
+			"teamImage":instance.teamImage,
+			"player1":instance.player1,
+			"player2":instance.player2,
+			"player3":instance.player3,
+			"player4":instance.player4,
 			}
+	pAdd = {
+			"p1":"Swap",
+			"p2":"Swap",
+			"p3":"Swap",
+			"p4":"Swap",
+			}
+	if team["player1"] is None:
+		pAdd["p1"] = "Add"
+	if team["player2"] is None:
+		pAdd["p2"] = "Add"
+	if team["player3"] is None:
+		pAdd["p3"] = "Add"
+	if team["player4"] is None:
+		pAdd["p4"] = "Add"
 		
 	context = {
 			"title":"My Team",
@@ -188,14 +239,45 @@ def leagueMyTeam(request,instance_id):
 			"login":"/login/",
  			"logout":"/logout/",
 			"league":"/leagueHome/"+str(instance.league.id)+"/",
+			#"playersLeague":"/players/"+ str(instance.league.id)+"/",
  			"createLeague":"/createLeague/",
  			"joinLeague":"/joinLeague/",
 			"myTeamLeague":"/myTeam/"+ str(instance_id)+"/",
 			"myTeams":"/myTeams/",
+			"team_id":instance_id,
 			"team":team,
 	}
 	return render(request, "league/myTeam.html", context=context)
 
+@login_required(login_url='/login/')
+def leaguePlayers(request,instance_id,player):
+	#instance = models.League.objects.get(id=instance_id)
+	instance = models.Team.objects.get(id=instance_id)
+	#team = models.Team.objects.get(owner=request.user,league=instance)
+
+	playerData = playerCached(request)
+
+	if 'pID' in request.GET:
+		pID = request.GET['pID']
+		instance.player1 = pID
+		instance.save()
+		return redirect("/myteam/"+str(instance_id)+"/")
+
+	context = {
+			"title":"Players",
+			"opener":"Players",
+			"initialStatement":"Here is where all of the available players will reside.",
+			"login":"/login/",
+ 			"logout":"/logout/",
+			"league":"/leagueHome/"+str(instance.league.id)+"/",
+			"playersLeague":"/players/"+ str(instance_id)+"/",
+ 			"createLeague":"/createLeague/",
+ 			"joinLeague":"/joinLeague/",
+			"myTeamLeague":"/myTeam/"+ str(instance_id)+"/",
+			"myTeams":"/myTeams/",
+			"players":playerData,
+	}
+	return render(request, "league/players.html", context=context)
 
 
 
