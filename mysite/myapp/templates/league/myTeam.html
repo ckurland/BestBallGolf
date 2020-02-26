@@ -10,11 +10,41 @@
 
 <h3>Players</h3>
 
-<p>Player 1: {{team.player1}} <a href="/players/{{team_id}}/1/" class="button">Add</a></p>
-<p>Player 2: {{team.player2}} <a href="/players/{{team_id}}/2/" class="button">Add</a></p>
-<p>Player 3: {{team.player3}} <a href="/players/{{team_id}}/3/" class="button">Add</a></p>
-<p>Player 4: {{team.player4}} <a href="/players/{{team_id}}/4/" class="button">Add</a></p>
-
+<table>
+	<tr>
+		<th>Option</th>
+		<th>Name</th>
+	</tr>
+		<tr align="center">
+			<td>
+				<a href="/players/{{team_id}}/1/" class="button">{{pAdd.p1}}</a>
+			</td>
+			<td>{{team.player1.FirstName}} {{team.player1.LastName}}</td>
+		</tr>
+		<tr align="center">
+			<td>
+				<a href="/players/{{team_id}}/2/" class="button">{{pAdd.p2}}</a>
+			</td>
+			<td>{{team.player2.FirstName}} {{team.player2.LastName}}</td>
+		</tr>
+		<tr align="center">
+			<td>
+				<a href="/players/{{team_id}}/3/" class="button">{{pAdd.p3}}</a>
+			</td>
+			<td>{{team.player3.FirstName}} {{team.player3.LastName}}</td>
+		</tr>
+		<tr align="center">
+			<td>
+				<a href="/players/{{team_id}}/4/" class="button">{{pAdd.p4}}</a>
+			</td>
+			<td>{{team.player4.FirstName}} {{team.player4.LastName}}</td>
+		</tr>
+<!--
+<p>Player 1: {{team.player1.FirstName}} {{team.player1.LastName}} <a href="/players/{{team_id}}/1/" class="button">{{pAdd.p1}}</a></p>
+<p>Player 2: {{team.player2.FirstName}} {{team.player2.LastName}} <a href="/players/{{team_id}}/2/" class="button">{{pAdd.p2}}</a></p>
+<p>Player 3: {{team.player3.FirstName}} {{team.player3.LastName}} <a href="/players/{{team_id}}/3/" class="button">{{pAdd.p3}}</a></p>
+<p>Player 4: {{team.player4.FirstName}} {{team.player4.LastName}} <a href="/players/{{team_id}}/4/" class="button">{{pAdd.p4}}</a></p>
+-->
 
 
 

@@ -12,6 +12,7 @@
 {% if players %}
 <table>
 	<tr>
+		<th></th>
 		<th>First Name</th>
 		<th>Last Name</th>
 		<th>PlayerID</th>
@@ -19,7 +20,7 @@
 		<th>Swings</th>
 	</tr>
 	{% for player in players %}
-		<tr>
+		<tr align="center">
 			<td>
 				<form method="get">
 					<button type="submit" name="pID" value={{player.PlayerID}}>add</button>
@@ -34,7 +35,6 @@
 	{% endfor %}
 </table>
 {% endif %}
-
 
 
 

@@ -9,21 +9,12 @@ from . import keyStore
 from . import models
 from . import forms
 
+from . import api
+
 """
 playerJson = requests.get('https://api.sportsdata.io/golf/v2/json/Players?key=%s' % keyStore.key)
 playerData = response.json()
 """
-
-def playerCached(request):
-	is_cached = ('playerData' in request.session)
-
-	if not is_cached:
-		print("Not Cached")
-		response = requests.get('https://api.sportsdata.io/golf/v2/json/Players?key=%s' % keyStore.key)
-		request.session['playerData'] = response.json()
-
-	playerData = request.session['playerData']
-	return playerData
 	
 
 def home(request):
@@ -42,9 +33,9 @@ def home(request):
 	"""
 	
 
-	"""
 	is_cached = ('playerData' in request.session)
 
+	"""
 	if not is_cached:
 		print("Not Cached")
 		response = requests.get('https://api.sportsdata.io/golf/v2/json/Players?key=%s' % keyStore.key)
@@ -52,7 +43,7 @@ def home(request):
 
 	playerData = request.session['playerData']
 	"""
-	playerData = playerCached(request)
+	playerData = api.playerCached(request)
 
 
 	player = {}
@@ -77,7 +68,7 @@ def home(request):
  			"joinLeague":"/joinLeague/",
 			"myTeams":"/myTeams/",
 			"player":player,
-			#"is_cached":is_cached,
+			"is_cached":is_cached,
 	}
 	return render(request, "home.html", context=context)
 
@@ -213,10 +204,10 @@ def leagueMyTeam(request,instance_id):
 			"teamName":instance.teamName,
 			"leagueID":instance.league.id,
 			"teamImage":instance.teamImage,
-			"player1":instance.player1,
-			"player2":instance.player2,
-			"player3":instance.player3,
-			"player4":instance.player4,
+			"player1":api.playerInfo(request,instance.player1),
+			"player2":api.playerInfo(request,instance.player2),
+			"player3":api.playerInfo(request,instance.player3),
+			"player4":api.playerInfo(request,instance.player4),
 			}
 	pAdd = {
 			"p1":"Swap",
@@ -226,20 +217,12 @@ def leagueMyTeam(request,instance_id):
 			}
 	if team["player1"] is None:
 		pAdd["p1"] = "Add"
-	else:
-		pAdd["p1"] = "Swap"
 	if team["player2"] is None:
 		pAdd["p2"] = "Add"
-	else:
-		pAdd["p2"] = "Swap"
 	if team["player3"] is None:
 		pAdd["p3"] = "Add"
-	else:
-		pAdd["p3"] = "Swap"
 	if team["player4"] is None:
 		pAdd["p4"] = "Add"
-	else:
-		pAdd["p4"] = "Swap"
 		
 	context = {
 			"title":"My Team",
@@ -253,6 +236,7 @@ def leagueMyTeam(request,instance_id):
 			"myTeamLeague":"/myTeam/"+ str(instance_id)+"/",
 			"myTeams":"/myTeams/",
 			"team_id":instance_id,
+			"pAdd":pAdd,
 			"team":team,
 	}
 	return render(request, "league/myTeam.html", context=context)
@@ -263,7 +247,7 @@ def leaguePlayers(request,instance_id,player,page=0):
 	instance = models.Team.objects.get(id=instance_id)
 	#team = models.Team.objects.get(owner=request.user,league=instance)
 
-	playerData = playerCached(request)
+	playerData = api.playerCached(request)
 
 	if 'pID' in request.GET:
 		pID = request.GET['pID']
@@ -291,6 +275,9 @@ def leaguePlayers(request,instance_id,player,page=0):
 			"myTeamLeague":"/myTeam/"+ str(instance_id)+"/",
 			"myTeams":"/myTeams/",
 			"players":playerData[page*10:(page*10+10)],
+			"page":page,
+			"player":player,
+			"teamID":instance_id,
 	}
 	return render(request, "league/players.html", context=context)
 
