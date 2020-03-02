@@ -10,6 +10,15 @@
 
 
 {% if players %}
+<!--
+<h3>Search for a player</h3>
+<form method="get">
+	First Name:<input type="text" name="first">
+	Last Name:<input type="text" name="last">
+	<button type="submit">search</button>
+</form>
+-->
+
 <table>
 	<tr>
 		<th></th>
@@ -20,6 +29,7 @@
 		<th>Swings</th>
 	</tr>
 	{% for player in players %}
+		{% if player.PlayerID not in uPlayers %}
 		<tr align="center">
 			<td>
 				<form method="get">
@@ -32,8 +42,12 @@
 			<td>{{player.Weight}}</td>
 			<td>{{player.Swings}}</td>
 		</tr>
+		{% endif %}
 	{% endfor %}
 </table>
+
+<p><a href="{{prevPage}}" class="button">Prev</a> <a href="{{nextPage}}" class="button">Next</a> </p>
+
 {% endif %}
 
 

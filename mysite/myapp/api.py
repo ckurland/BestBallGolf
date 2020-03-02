@@ -21,12 +21,12 @@ def playerInfo(request,player_id):
 
 	if player_id is None:
 		return None
+	#return player_id
 	players = playerCached(request)
 	
 	for p in players:
 		if p["PlayerID"] == player_id:
 			return p
-
 	
 
 

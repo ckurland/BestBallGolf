@@ -249,18 +249,67 @@ def leaguePlayers(request,instance_id,player,page=0):
 
 	playerData = api.playerCached(request)
 
+
+	"""
+	players = [{}]
+
+	if 'first' in request.GET or 'last' in request.GET:
+		first = request.GET['first']
+		last = request.GET['last']
+		for player in playerData:
+			if player['FirstName'] == first or player['LastName'] == last:
+				players += player
+		playerData = players
+	"""
+
+
+
 	if 'pID' in request.GET:
 		pID = request.GET['pID']
 		if player == 1:
+			try:
+				models.UnavailablePlayers.objects.get(league=instance.league,playerID=instance.player1).delete()
+			except:
+				print("")
 			instance.player1 = pID
+			p = models.UnavailablePlayers(playerID = pID,league=instance.league)
+			p.save()
+		
 		if player == 2:
+			try:
+				models.UnavailablePlayers.objects.get(league=instance.league,playerID=instance.player2).delete()
+			except:
+				print("")
 			instance.player2 = pID
+			p = models.UnavailablePlayers(playerID = pID,league=instance.league)
+			p.save()
 		if player == 3:
+			try:
+				models.UnavailablePlayers.objects.get(league=instance.league,playerID=instance.player3).delete()
+			except:
+				print("")
 			instance.player3 = pID
+			p = models.UnavailablePlayers(playerID = pID,league=instance.league)
+			p.save()
 		if player == 4:
+			try:
+				models.UnavailablePlayers.objects.get(league=instance.league,playerID=instance.player4).delete()
+			except:
+				print("")
 			instance.player4 = pID
+			p = models.UnavailablePlayers(playerID = pID,league=instance.league)
+			p.save()
 		instance.save()
 		return redirect("/myTeam/"+str(instance_id)+"/")
+
+	uPlayers = list(models.UnavailablePlayers.objects.filter(league=instance.league).values_list('playerID',flat=True))
+
+	nextPage = page +1
+	prevPage = page
+	if page == 0:
+		prevPage = 0
+	else:
+		prevPage = prevPage -1
 
 	context = {
 			"title":"Players",
@@ -269,15 +318,18 @@ def leaguePlayers(request,instance_id,player,page=0):
 			"login":"/login/",
  			"logout":"/logout/",
 			"league":"/leagueHome/"+str(instance.league.id)+"/",
-			"playersLeague":"/players/"+ str(instance_id)+"/",
+			#"playersLeague":"/players/"+ str(instance_id)+"/",
  			"createLeague":"/createLeague/",
  			"joinLeague":"/joinLeague/",
 			"myTeamLeague":"/myTeam/"+ str(instance_id)+"/",
 			"myTeams":"/myTeams/",
-			"players":playerData[page*10:(page*10+10)],
+			"players":playerData[page*20:(page*20+20)],
 			"page":page,
 			"player":player,
+			"uPlayers":uPlayers,
 			"teamID":instance_id,
+			"nextPage":"/players/"+str(instance_id)+"/"+str(player)+"/"+str(nextPage)+"/",
+			"prevPage":"/players/"+str(instance_id)+"/"+str(player)+"/"+str(prevPage)+"/",
 	}
 	return render(request, "league/players.html", context=context)
 
