@@ -8,6 +8,17 @@
 {{ initialStatement }}
 </p>
 
+<label for="tourney">Choose a Tournament:</label>
+
+<form method="get" id="tForm">
+<button type="submit">search</button>
+</form>
+<select id="tourney" form="tForm">
+{% for t in tourneys %}
+  <option name="tID" value="{{t.TournamentID }}">{{ t.Name }}</option>
+{% endfor %}
+</select>
+
 <h3>Players</h3>
 
 <table>
@@ -20,6 +31,23 @@
 				<a href="/players/{{team_id}}/1/" class="button">{{pAdd.p1}}</a>
 			</td>
 			<td>{{team.player1.FirstName}} {{team.player1.LastName}}</td>
+			<td><table>
+				<tr align="center">
+				<th>Hole:</th>
+				<th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th>
+				<th>7</th><th>8</th><th>9</th><th>10</th><th>11</th><th>12</th>
+				<th>13</th><th>14</th><th>15</th><th>16</th><th>17</th><th>18</th>
+				<th>Total</th>
+				</tr>
+				<tr align="center">
+				<td>Round 1:</td>
+				{% for h in rounds.p1 %}
+					<td>{{h.Score}}</td>
+				{% endfor %}
+				</tr>
+			</table>
+			</td>
+				
 		</tr>
 		<tr align="center">
 			<td>
