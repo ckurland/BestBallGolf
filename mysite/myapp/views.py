@@ -228,39 +228,48 @@ def leagueMyTeam(request,instance_id):
 		pAdd["p4"] = "Add"
 
 	leaderboard = {}
-	p1Round = {}
+	p1Round = None
 	p2Round = {}
 	p3Round = {}
 	p4Round = {}
+	p1r = 0
+	p2r = 0
+	p3r = 0
+	p4r = 0	
 
 	if 'tID' in request.GET:
-		print("INNNNN")
 		tID = request.GET['tID']
-		leaderboard = leaderboardCached(request,tID)
+		leaderboard = api.leaderboardCached(request,tID)
 		for p in leaderboard["Players"]:
 			if p["PlayerID"] == instance.player1:
 				for r in p["Rounds"]:
-					print("PLEASE")
 					if r["Number"] == 1:
-						print("HELP")
+						p1r = r["Score"]
 						p1Round = r["Holes"]
 			if p["PlayerID"] == instance.player2:
 				for r in p["Rounds"]:
 					if r["Number"] == 1:
+						p2r = r["Score"]
 						p2Round = r["Holes"]
 			if p["PlayerID"] == instance.player3:
 				for r in p["Rounds"]:
 					if r["Number"] == 1:
+						p3r = r["Score"]
 						p3Round = r["Holes"]
 			if p["PlayerID"] == instance.player4:
 				for r in p["Rounds"]:
 					if r["Number"] == 1:
+						p4r = r["Score"]
 						p4Round = r["Holes"]
 	rounds = {
 			"p1":p1Round,
 			"p2":p2Round,
 			"p3":p3Round,
 			"p4":p4Round,
+			"t1":p1r,
+			"t2":p2r,
+			"t3":p3r,
+			"t4":p4r,
 			}
 	
 	context = {
