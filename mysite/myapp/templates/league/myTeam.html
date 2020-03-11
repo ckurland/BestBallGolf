@@ -9,17 +9,24 @@
 </p>
 
 
+
+
 <form method="get">
 <label for="tourney">Choose a tournament:</label>
 <select id="tourney" name="tID">
 {% for t in tourneys %}
-<!--  <option value="{{t.TournamentID }}" <?php if($_POST['tID'] == "{{t.TournamentID}}") {echo "selected=selected"; } ?>>{{ t.Name }}</option>
+<!--
+<option value="{{t.TournamentID }}" <?php if($_POST["tID"] == "{{t.TournamentID}}") {echo 'selected="selected"'; } ?>>{{ t.Name }}</option>
 -->
  <option value="{{t.TournamentID }}">{{ t.Name }}</option>
 {% endfor %}
 </select>
 <input type="submit" value="Submit">
 </form>
+
+{% if curTourney %}
+<h4>Tournament Shown: {{curTourney}}</h4>
+{% endif %}
 
 <h3>Players</h3>
 
@@ -129,12 +136,29 @@
 			</table>
 			</td>
 		</tr>
-<!--
-<p>Player 1: {{team.player1.FirstName}} {{team.player1.LastName}} <a href="/players/{{team_id}}/1/" class="button">{{pAdd.p1}}</a></p>
-<p>Player 2: {{team.player2.FirstName}} {{team.player2.LastName}} <a href="/players/{{team_id}}/2/" class="button">{{pAdd.p2}}</a></p>
-<p>Player 3: {{team.player3.FirstName}} {{team.player3.LastName}} <a href="/players/{{team_id}}/3/" class="button">{{pAdd.p3}}</a></p>
-<p>Player 4: {{team.player4.FirstName}} {{team.player4.LastName}} <a href="/players/{{team_id}}/4/" class="button">{{pAdd.p4}}</a></p>
--->
+		<tr align="center">
+			<td></td>
+			<td>Combined Score</td>
+			<td><table>
+				<tr align="center">
+				<th>Hole:</th>
+				<th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th>
+				<th>7</th><th>8</th><th>9</th><th>10</th><th>11</th><th>12</th>
+				<th>13</th><th>14</th><th>15</th><th>16</th><th>17</th><th>18</th>
+				<th>Total</th>
+				</tr>
+				<tr align="center">
+				<td>Round 1:</td>
+				{% for h in totalHoleScore %}
+					<td>{{h}}</td>
+				{% endfor %}
+				<td>{{totalScore}}</td>
+				</tr>
+			</table>
+			</td>
+		</tr>
+
+</table>
 
 
 

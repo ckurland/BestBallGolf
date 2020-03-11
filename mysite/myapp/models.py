@@ -41,4 +41,17 @@ class UnavailablePlayers(models.Model):
 	playerID = models.IntegerField()
 	league = models.ForeignKey(League, on_delete=models.CASCADE)
 
+class CurTourney(models.Model):
+	league = models.ForeignKey(League, on_delete=models.CASCADE)
+	tID = models.IntegerField()
+	endDate = models.DateField()
+	
+class Scores(models.Model):
+	team = models.ForeignKey(Team, on_delete=models.CASCADE)
+	tID = models.IntegerField()
+	round1 = models.IntegerField(null=True)
+	round2 = models.IntegerField(null=True)
+	round3 = models.IntegerField(null=True)
+	round4 = models.IntegerField(null=True)
+
 

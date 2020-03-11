@@ -18,15 +18,18 @@
 	<button type="submit">search</button>
 </form>
 -->
-
-<table>
+<table id="myTable">
 	<tr>
 		<th></th>
+		<th>Name</th>
+		<th>World Rank</th>
+<!--
 		<th>First Name</th>
 		<th>Last Name</th>
 		<th>PlayerID</th>
 		<th>Weight</th>
 		<th>Swings</th>
+-->
 	</tr>
 	{% for player in players %}
 		{% if player.PlayerID not in uPlayers %}
@@ -36,11 +39,15 @@
 					<button type="submit" name="pID" value={{player.PlayerID}}>add</button>
 				</form>
 			</td>
-			<td>{{ player.FirstName }}</td>
-			<td>{{ player.LastName }}</td>
-			<td>{{player.PlayerID}}</td>
-			<td>{{player.Weight}}</td>
-			<td>{{player.Swings}}</td>
+			<td >{{player.Name}}</td>
+			<td >{{player.WorldGolfRank}}</td>
+<!--
+			<td >{{ player.FirstName }}</td>
+			<td >{{ player.LastName }}</td>
+			<td >{{player.PlayerID}}</td>
+			<td >{{player.Weight}}</td>
+			<td >{{player.Swings}}</td>
+-->
 		</tr>
 		{% endif %}
 	{% endfor %}
