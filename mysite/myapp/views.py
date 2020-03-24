@@ -356,6 +356,24 @@ def leaguePlayers(request,instance_id,player,page=0):
 	}
 	return render(request, "league/players.html", context=context)
 
+@login_required(login_url='/login/')
+@csrf_exempt
+def availPlayers_view(request,instance_id):
+	if request.method == "GET":
+		playerData = api.wgrCached(request)
+		instance = models.Team.objects.get(id=instance_id)
+		uPlayers = list(models.UnavailablePlayers.objects.filter(league=instance.league).values_list('playerID',flat=True))
+		player_list = {"availPlayers":[]}
+		for p in playerData:
+			valid = 1
+			for u in uPlayers:
+				if p["PlayerID"] == u:
+					valid = 0
+			if valid == 1:
+				player_list["availPlayers"] += [p]
+		return JsonResponse(player_list)
+	else:
+		return HttpResponse("Unsupported HTTP Method")
 
 
 

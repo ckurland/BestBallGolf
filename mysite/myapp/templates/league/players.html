@@ -1,4 +1,5 @@
 {% extends "league/base.html" %}
+{% load static %}
 
 {% block content %}
 
@@ -8,6 +9,7 @@
 {{ initialStatement }}
 </p>
 
+<param id="lID" value="{{teamID}}">
 
 {% if players %}
 <!--
@@ -18,18 +20,12 @@
 	<button type="submit">search</button>
 </form>
 -->
+<!--
 <table id="myTable">
 	<tr>
 		<th></th>
 		<th>Name</th>
 		<th>World Rank</th>
-<!--
-		<th>First Name</th>
-		<th>Last Name</th>
-		<th>PlayerID</th>
-		<th>Weight</th>
-		<th>Swings</th>
--->
 	</tr>
 	{% for player in players %}
 		{% if player.PlayerID not in uPlayers %}
@@ -41,23 +37,47 @@
 			</td>
 			<td >{{player.Name}}</td>
 			<td >{{player.WorldGolfRank}}</td>
-<!--
-			<td >{{ player.FirstName }}</td>
-			<td >{{ player.LastName }}</td>
-			<td >{{player.PlayerID}}</td>
-			<td >{{player.Weight}}</td>
-			<td >{{player.Swings}}</td>
--->
 		</tr>
 		{% endif %}
 	{% endfor %}
 </table>
+
+-->
 
 <p><a href="{{prevPage}}" class="button">Prev</a> <a href="{{nextPage}}" class="button">Next</a> </p>
 
 {% endif %}
 
 
+<div id="app">
+<table id="myTable">
+	<tr>
+		<th></th>
+		<th>Name</th>
+		<th>World Rank</th>
+	</tr>
+		<tr align="center" v-for="p in availPlayers">
+    {% verbatim %}
+			<td>
+				<form method="get">
+					<button type="submit" name="pID" value={{p.PlayerID}}>add</button>
+				</form>
+			</td>
+			<td >{{p.Name}}</td>
+			<td >{{p.WorldGolfRank}}</td>
+    {% endverbatim %}
+		</tr>
+</table>
+</div>
 
 
+
+
+{% endblock %}
+
+{% block scripts %}
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<!-- development version, includes helpful console warnings -->
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="{% static "js/myvue.js" %}"></script>
 {% endblock %}
