@@ -206,6 +206,7 @@ def leagueHome(request,instance_id):
 				endDate = datetime.datetime.strptime(t["EndDate"],'%Y-%m-%dT%H:%M:%S').date()
 				instance.tID = curTourney
 				instance.endDate = endDate
+				prevTourney = None
 				break
 		teams = models.Team.objects.filter(league=instance)
 		for tm in teams:
