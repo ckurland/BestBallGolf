@@ -8,7 +8,29 @@
 {{ initialStatement }}
 </p>
 
+{% if commish %}
+{% if tourneys %}
+<form method="get">
+<label for="tourney">Select the tournament for the league:</label>
+<select id="tourney" name="tID">
+{% for t in tourneys %}
+ <option value="{{t.TournamentID }}">{{ t.Name }}</option>
+{% endfor %}
+</select>
+<input type="submit" value="Submit">
+</form>
+{% endif %}
+{% endif %}
 
+{% if draft %}
+<h4>It's time to draft, join Now!</h4>
+<a href="/draft/{{team_id}}/1/" class="button">Enter Draft</a>
+{% endif %}
+
+{% if curTourney %}
+<h4>Active Tournament: {{curTourney}}</h4>
+<h4>End Date: {{endDate}}</h4>
+{% endif %}
 
 
 
