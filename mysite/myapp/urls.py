@@ -18,4 +18,5 @@ urlpatterns = [
     path('register/', views.register),
 	path('availPlayers/<int:instance_id>/', views.availPlayers_view),
 	path('teamDraft/<int:instance_id>/', views.teamDraft_view),
+    path('addPlayer/<int:instance_id>/<int:pID>/', views.addPlayer),
 ]

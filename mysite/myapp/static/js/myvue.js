@@ -1,5 +1,5 @@
 
-var instance_id = document.getElementById('lID').value;
+var instance_id = document.getElementById('tID').value;
 //player list
 var app = new Vue({
     el: '#app',
@@ -33,6 +33,7 @@ var app = new Vue({
           this.seen=false
           this.unseen=true
       },
+		
       cancelAutoUpdate: function() { clearInterval(this.timer) }
     },
     beforeDestroy() {
@@ -40,4 +41,11 @@ var app = new Vue({
     }
   
   })
+
+function addPlayer(playerID) {
+	console.log("HTLELPDSFASF")
+	const response = axios.get('/addPlayer/'+instance_id+'/'+playerID+'/');
+	console.log(response);
+
+}
 

@@ -9,7 +9,7 @@
 {{ initialStatement }}
 </p>
 
-<param id="lID" value="{{teamID}}">
+<param id="tID" value="{{teamID}}">
 
 {% if players %}
 
@@ -46,8 +46,6 @@
 
 
 <div class="large-8 medium-8 small-6 cell">
-
-
 <table id="myTable">
 	<tr>
 		<th></th>
@@ -58,8 +56,11 @@
     {% verbatim %}
 			<td>
 				<form method="get">
-					<button type="submit" name="pID" value={{p.PlayerID}}>Draft</button>
+					<button type="submit" name="pID" v-bind:value="p.PlayerID">Draft</button>
 				</form>
+<!--
+				<button v-bind:onclick=addPlayer(p.PlayerID)>Draft</button>
+-->
 			</td>
 			<td >{{p.Name}}</td>
 			<td >{{p.WorldGolfRank}}</td>
@@ -87,17 +88,17 @@
 </div>
 </div>
 </div>
-</div>
 
 <div align="center" v-else>
 
 <h2>The draft has concluded</h2>
 <form method="get">
-	<button type="submit" name="done" value="done">Return Home</button>
+	<button type="submit" name="done" value=1>End Draft</button>
 </form>
 
 </div>
 
+</div>
 
 
 

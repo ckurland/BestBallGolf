@@ -3,6 +3,7 @@ from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
+import datetime
 import requests
 from . import keyStore
 
@@ -184,6 +185,9 @@ def leagueHome(request,instance_id):
 	commish = None
 	if request.user == instance.commissioner:
 		commish = 1
+	#instance.activeTourney = 0
+	#instance.save()
+	print(instance.activeTourney)
 	
 	prevTourney = None
 	curTourney = None
@@ -192,6 +196,7 @@ def leagueHome(request,instance_id):
 		if commish == 1:
 			prevTourney = api.prevTourney(request)
 	else:
+		# Want to make it show name not tID, possible function in api.py
 		curTourney = instance.tID
 		endDate = instance.endDate
 
@@ -201,12 +206,14 @@ def leagueHome(request,instance_id):
 		instance.activeDraft = 1
 
 		for t in prevTourney:
-			if t["TournamentID"] == tID:
+			if t["TournamentID"] == int(tID):
 				curTourney = t["Name"]
 				endDate = datetime.datetime.strptime(t["EndDate"],'%Y-%m-%dT%H:%M:%S').date()
-				instance.tID = curTourney
+				print(curTourney)
+				print(endDate)
+				instance.tID = tID
 				instance.endDate = endDate
-				prevTourney = None
+				instance.save()
 				break
 		teams = models.Team.objects.filter(league=instance)
 		for tm in teams:
@@ -214,11 +221,13 @@ def leagueHome(request,instance_id):
 			tm.player2 = None
 			tm.player3 = None
 			tm.player4 = None
+			tm.save()
 		
 		try:
 			models.UnavailablePlayers.objects.filter(league=instance).delete()
 		except:
 			print("")
+		prevTourney = None
 		instance.save()
 
 	draft = None
@@ -317,8 +326,6 @@ def leagueDraft(request,instance_id,player):
 
 	playerData = api.wgrCached(request)
 	#playerData = api.playerCached(request)
-	
-
 	if 'pID' in request.GET:
 		pID = request.GET['pID']
 		if instance.player1 == None:
@@ -329,7 +336,7 @@ def leagueDraft(request,instance_id,player):
 			instance.player1 = pID
 			p = models.UnavailablePlayers(playerID = pID,league=instance.league)
 			p.save()
-		
+			
 		elif instance.player2 == None:
 			try:
 				models.UnavailablePlayers.objects.get(league=instance.league,playerID=instance.player2).delete()
@@ -355,8 +362,6 @@ def leagueDraft(request,instance_id,player):
 			p = models.UnavailablePlayers(playerID = pID,league=instance.league)
 			p.save()
 		instance.save()
-		#return redirect("/myTeam/"+str(instance_id)+"/")
-
 
 	if 'done' in request.GET:
 		league = models.League.objects.get(id=instance.league.id)
@@ -385,6 +390,47 @@ def leagueDraft(request,instance_id,player):
 			"teamID":instance_id,
 	}
 	return render(request, "league/draft.html", context=context)
+
+@login_required(login_url='/login/')
+def addPlayer(request,teamID,pID):
+	print("PLEASE WORK")
+	instance = models.Team.objects.get(id=instance_id)
+	if instance.player1 == None:
+		try:
+			models.UnavailablePlayers.objects.get(league=instance.league,playerID=instance.player1).delete()
+		except:
+			print("")
+		instance.player1 = pID
+		p = models.UnavailablePlayers(playerID = pID,league=instance.league)
+		p.save()
+		
+	elif instance.player2 == None:
+		try:
+			models.UnavailablePlayers.objects.get(league=instance.league,playerID=instance.player2).delete()
+		except:
+			print("")
+		instance.player2 = pID
+		p = models.UnavailablePlayers(playerID = pID,league=instance.league)
+		p.save()
+	elif instance.player3 == None:
+		try:
+			models.UnavailablePlayers.objects.get(league=instance.league,playerID=instance.player3).delete()
+		except:
+			print("")
+		instance.player3 = pID
+		p = models.UnavailablePlayers(playerID = pID,league=instance.league)
+		p.save()
+	else:
+		try:
+			models.UnavailablePlayers.objects.get(league=instance.league,playerID=instance.player4).delete()
+		except:
+			print("")
+		instance.player4 = pID
+		p = models.UnavailablePlayers(playerID = pID,league=instance.league)
+		p.save()
+	instance.save()
+	#return redirect("/myTeam/"+str(instance_id)+"/")
+	return HttpResponse("Player Added")
 
 @login_required(login_url='/login/')
 def leaguePlayers(request,instance_id,player,page=0):
