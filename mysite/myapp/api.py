@@ -35,7 +35,8 @@ def leaderboardCached(request,tID):
 	is_cached = ('leaderboard' in request.session)
 	tourney_cached = ('tID' in request.session)
 
-	toID = request.session['tID']
+	if tourney_cached:
+		toID = request.session['tID']
 	
 	if not tourney_cached or toID != str(tID) or not is_cached:
 		print("Not Cached Leaderboard")

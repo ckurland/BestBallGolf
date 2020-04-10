@@ -14,5 +14,9 @@ urlpatterns = [
     path('myTeam/<int:instance_id>/', views.leagueMyTeam),
     path('players/<int:instance_id>/<int:player>/<int:page>/', views.leaguePlayers),
     path('players/<int:instance_id>/<int:player>/', views.leaguePlayers),
+    path('draft/<int:instance_id>/<int:player>/', views.leagueDraft),
     path('register/', views.register),
+	path('availPlayers/<int:instance_id>/', views.availPlayers_view),
+	path('teamDraft/<int:instance_id>/', views.teamDraft_view),
+    path('addPlayer/<int:instance_id>/<int:pID>/', views.addPlayer),
 ]

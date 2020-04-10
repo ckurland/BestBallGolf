@@ -9,17 +9,10 @@
 {{ initialStatement }}
 </p>
 
-<param id="lID" value="{{teamID}}">
+<param id="tID" value="{{teamID}}">
 
 {% if players %}
-<!--
-<h3>Search for a player</h3>
-<form method="get">
-	First Name:<input type="text" name="first">
-	Last Name:<input type="text" name="last">
-	<button type="submit">search</button>
-</form>
--->
+
 <!--
 <table id="myTable">
 	<tr>
@@ -44,12 +37,15 @@
 
 -->
 
-<p><a href="{{prevPage}}" class="button">Prev</a> <a href="{{nextPage}}" class="button">Next</a> </p>
-
 {% endif %}
 
-
 <div id="app">
+<div v-if="teams.length > 0">
+<div class="grid-container">
+<div class="grid-x grid-padding-x">
+
+
+<div class="large-8 medium-8 small-6 cell">
 <table id="myTable">
 	<tr>
 		<th></th>
@@ -60,14 +56,48 @@
     {% verbatim %}
 			<td>
 				<form method="get">
-					<button type="submit" name="pID" value={{p.PlayerID}}>add</button>
+					<button type="submit" name="pID" v-bind:value="p.PlayerID">Draft</button>
 				</form>
+<!--
+				<button v-bind:onclick=addPlayer(p.PlayerID)>Draft</button>
+-->
 			</td>
 			<td >{{p.Name}}</td>
 			<td >{{p.WorldGolfRank}}</td>
     {% endverbatim %}
 		</tr>
 </table>
+</div>
+
+<div class="large-4 medium-4 small-6 cell">
+<h4>Draft Order</h4>
+<ul class="list-group">
+  <div v-for="(t,index) in teams">
+    {% verbatim %}
+		<div v-if=" index < 1">
+  		<li class="list-group-item active">{{t}}</li>
+		</div>
+		<div v-else>
+  		<li class="list-group-item">{{t}}</li>
+		</div>
+    {% endverbatim %}
+  </div>
+</ul>
+</div>
+
+</div>
+</div>
+</div>
+
+<div align="center" v-else>
+
+<h2>The draft has concluded</h2>
+<form method="get">
+	<button type="submit" name="done" value=1>End Draft</button>
+</form>
+
+</div>
+
 </div>
 
 

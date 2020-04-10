@@ -14,6 +14,12 @@ class League(models.Model):
 	leagueDescription = models.CharField(max_length=500)
 	joinKey = models.CharField(max_length=20,unique=True)
 	commissioner = models.ForeignKey(User,on_delete=models.CASCADE)
+
+	activeTourney = models.IntegerField(default = 0)
+	activeDraft = models.IntegerField(default = 0)
+	tID = models.IntegerField(null=True)
+	endDate = models.DateField(null=True)
+
 	leagueImage = models.ImageField(
 		max_length=144,
 		upload_to='uploads/%Y/%m/%d')
@@ -41,10 +47,12 @@ class UnavailablePlayers(models.Model):
 	playerID = models.IntegerField()
 	league = models.ForeignKey(League, on_delete=models.CASCADE)
 
+"""
 class CurTourney(models.Model):
-	league = models.ForeignKey(League, on_delete=models.CASCADE)
+	league = models.OneToOneField(League, on_delete=models.CASCADE)
 	tID = models.IntegerField()
 	endDate = models.DateField()
+"""
 	
 class Scores(models.Model):
 	team = models.ForeignKey(Team, on_delete=models.CASCADE)

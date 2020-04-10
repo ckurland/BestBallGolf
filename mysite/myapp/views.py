@@ -3,6 +3,7 @@ from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
+import datetime
 import requests
 from . import keyStore
 
@@ -181,6 +182,58 @@ def leagueHome(request,instance_id):
 	instance = models.League.objects.get(id=instance_id)
 	team = models.Team.objects.get(owner=request.user,league=instance)
 
+	commish = None
+	if request.user == instance.commissioner:
+		commish = 1
+	#instance.activeTourney = 0
+	#instance.save()
+	print(instance.activeTourney)
+	
+	prevTourney = None
+	curTourney = None
+	endDate = None
+	if instance.activeTourney == 0:
+		if commish == 1:
+			prevTourney = api.prevTourney(request)
+	else:
+		# Want to make it show name not tID, possible function in api.py
+		curTourney = instance.tID
+		endDate = instance.endDate
+
+	if 'tID' in request.GET:
+		tID = request.GET['tID']
+		instance.activeTourney = 1
+		instance.activeDraft = 1
+
+		for t in prevTourney:
+			if t["TournamentID"] == int(tID):
+				curTourney = t["Name"]
+				endDate = datetime.datetime.strptime(t["EndDate"],'%Y-%m-%dT%H:%M:%S').date()
+				print(curTourney)
+				print(endDate)
+				instance.tID = tID
+				instance.endDate = endDate
+				instance.save()
+				break
+		teams = models.Team.objects.filter(league=instance)
+		for tm in teams:
+			tm.player1 = None
+			tm.player2 = None
+			tm.player3 = None
+			tm.player4 = None
+			tm.save()
+		
+		try:
+			models.UnavailablePlayers.objects.filter(league=instance).delete()
+		except:
+			print("")
+		prevTourney = None
+		instance.save()
+
+	draft = None
+	if instance.activeDraft == 1:
+		draft = 1
+
 
 	context = {
 			"title":"League Homepage",
@@ -194,6 +247,12 @@ def leagueHome(request,instance_id):
  			"createLeague":"/createLeague/",
  			"joinLeague":"/joinLeague/",
 			"myTeams":"/myTeams/",
+			"tourneys":prevTourney,
+			"curTourney":curTourney,
+			"endDate":endDate,
+			"commish":commish,
+			"draft":draft,
+			"team_id":team.id,
 	}
 	return render(request, "league/home.html", context=context)
 
@@ -260,6 +319,120 @@ def leagueMyTeam(request,instance_id):
 	return render(request, "league/myTeam.html", context=context)
 
 @login_required(login_url='/login/')
+def leagueDraft(request,instance_id,player):
+	#instance = models.League.objects.get(id=instance_id)
+	instance = models.Team.objects.get(id=instance_id)
+	#team = models.Team.objects.get(owner=request.user,league=instance)
+
+	playerData = api.wgrCached(request)
+	#playerData = api.playerCached(request)
+	if 'pID' in request.GET:
+		pID = request.GET['pID']
+		if instance.player1 == None:
+			try:
+				models.UnavailablePlayers.objects.get(league=instance.league,playerID=instance.player1).delete()
+			except:
+				print("")
+			instance.player1 = pID
+			p = models.UnavailablePlayers(playerID = pID,league=instance.league)
+			p.save()
+			
+		elif instance.player2 == None:
+			try:
+				models.UnavailablePlayers.objects.get(league=instance.league,playerID=instance.player2).delete()
+			except:
+				print("")
+			instance.player2 = pID
+			p = models.UnavailablePlayers(playerID = pID,league=instance.league)
+			p.save()
+		elif instance.player3 == None:
+			try:
+				models.UnavailablePlayers.objects.get(league=instance.league,playerID=instance.player3).delete()
+			except:
+				print("")
+			instance.player3 = pID
+			p = models.UnavailablePlayers(playerID = pID,league=instance.league)
+			p.save()
+		else:
+			try:
+				models.UnavailablePlayers.objects.get(league=instance.league,playerID=instance.player4).delete()
+			except:
+				print("")
+			instance.player4 = pID
+			p = models.UnavailablePlayers(playerID = pID,league=instance.league)
+			p.save()
+		instance.save()
+
+	if 'done' in request.GET:
+		league = models.League.objects.get(id=instance.league.id)
+		league.activeDraft = 0
+		league.save()
+		return redirect("/myTeam/"+str(instance_id)+"/")
+
+
+	uPlayers = list(models.UnavailablePlayers.objects.filter(league=instance.league).values_list('playerID',flat=True))
+
+
+	context = {
+			"title":"Draft",
+			"opener":"Draft",
+			"initialStatement":"This is what separates the winners from the losers. Welcome to the draft.",
+			"login":"/login/",
+ 			"logout":"/logout/",
+			"league":"/leagueHome/"+str(instance.league.id)+"/",
+			#"playersLeague":"/players/"+ str(instance_id)+"/",
+ 			"createLeague":"/createLeague/",
+ 			"joinLeague":"/joinLeague/",
+			"myTeamLeague":"/myTeam/"+ str(instance_id)+"/",
+			"myTeams":"/myTeams/",
+			"player":player,
+			"uPlayers":uPlayers,
+			"teamID":instance_id,
+	}
+	return render(request, "league/draft.html", context=context)
+
+@login_required(login_url='/login/')
+def addPlayer(request,teamID,pID):
+	print("PLEASE WORK")
+	instance = models.Team.objects.get(id=instance_id)
+	if instance.player1 == None:
+		try:
+			models.UnavailablePlayers.objects.get(league=instance.league,playerID=instance.player1).delete()
+		except:
+			print("")
+		instance.player1 = pID
+		p = models.UnavailablePlayers(playerID = pID,league=instance.league)
+		p.save()
+		
+	elif instance.player2 == None:
+		try:
+			models.UnavailablePlayers.objects.get(league=instance.league,playerID=instance.player2).delete()
+		except:
+			print("")
+		instance.player2 = pID
+		p = models.UnavailablePlayers(playerID = pID,league=instance.league)
+		p.save()
+	elif instance.player3 == None:
+		try:
+			models.UnavailablePlayers.objects.get(league=instance.league,playerID=instance.player3).delete()
+		except:
+			print("")
+		instance.player3 = pID
+		p = models.UnavailablePlayers(playerID = pID,league=instance.league)
+		p.save()
+	else:
+		try:
+			models.UnavailablePlayers.objects.get(league=instance.league,playerID=instance.player4).delete()
+		except:
+			print("")
+		instance.player4 = pID
+		p = models.UnavailablePlayers(playerID = pID,league=instance.league)
+		p.save()
+	instance.save()
+	#return redirect("/myTeam/"+str(instance_id)+"/")
+	return HttpResponse("Player Added")
+
+@login_required(login_url='/login/')
 def leaguePlayers(request,instance_id,player,page=0):
 	#instance = models.League.objects.get(id=instance_id)
 	instance = models.Team.objects.get(id=instance_id)
@@ -268,12 +441,8 @@ def leaguePlayers(request,instance_id,player,page=0):
 	playerData = api.wgrCached(request)
 	#playerData = api.playerCached(request)
 	
-	print(type(playerData))
-	#playerData.sort(reverse=True,key=playerData.LastName)
-	#playerData = sorted(playerData, key = lambda k:k['WorldGolfRank'],reverse=False)
 
-
-	"""
+	#Comment out from here 
 	players = [{}]
 
 	if 'first' in request.GET or 'last' in request.GET:
@@ -283,9 +452,7 @@ def leaguePlayers(request,instance_id,player,page=0):
 			if player['FirstName'] == first or player['LastName'] == last:
 				players += player
 		playerData = players
-	"""
-
-
+	#Comment out to here
 
 	if 'pID' in request.GET:
 		pID = request.GET['pID']
@@ -356,7 +523,47 @@ def leaguePlayers(request,instance_id,player,page=0):
 	}
 	return render(request, "league/players.html", context=context)
 
+@login_required(login_url='/login/')
+@csrf_exempt
+def availPlayers_view(request,instance_id):
+	if request.method == "GET":
+		playerData = api.wgrCached(request)
+		instance = models.Team.objects.get(id=instance_id)
+		uPlayers = list(models.UnavailablePlayers.objects.filter(league=instance.league).values_list('playerID',flat=True))
+		players_list = {"availPlayers":[]}
+		for p in playerData:
+			valid = 1
+			for u in uPlayers:
+				if p["PlayerID"] == u:
+					valid = 0
+			if valid == 1:
+				players_list["availPlayers"] += [p]
+		return JsonResponse(players_list)
+	else:
+		return HttpResponse("Unsupported HTTP Method")
 
+@login_required(login_url='/login/')
+@csrf_exempt
+def teamDraft_view(request,instance_id):
+	if request.method == "GET":
+		instance = models.Team.objects.get(id=instance_id)
+		teams = models.Team.objects.filter(league=instance.league)
+		team_list = {"teams":[]}
+		for p in teams:
+			if p.player1 is None:
+				team_list["teams"] += [p.teamName]
+		for p in reversed(teams):
+			if p.player2 is None:
+				team_list["teams"] += [p.teamName]
+		for p in teams:
+			if p.player3 is None:
+				team_list["teams"] += [p.teamName]
+		for p in reversed(teams):
+			if p.player4 is None:
+				team_list["teams"] += [p.teamName]
+		return JsonResponse(team_list)
+	else:
+		return HttpResponse("Unsupported HTTP Method")
 
 
 def register(request):
