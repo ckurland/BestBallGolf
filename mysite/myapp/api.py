@@ -195,3 +195,87 @@ def roundInfo(request,instance,ro):
 	return rounds
 
 
+def checkRound(request,instance_id,rounds):
+	instance = models.Team.objects.get(id=instance_id)
+	tID = instance.league.tID
+	curRound = int(instance.curRound)
+	leaderboard = leaderboardCached(request,tID)
+	par = leaderboard["Tournament"]
+	par = int(par["Par"])
+	totalHoleScore = [0] * 18
+
+	if instance.roundFin == 0:
+		done = 0
+		count = 0;
+		if rounds["p1"] is not None:
+			for r in rounds["p1"]:
+				totalHoleScore[count] = int(r["Score"])
+				count += 1
+			if count == 18:
+				done += 1
+		count = 0;
+		if rounds["p2"] is not None:
+			for r in rounds["p2"]:
+				if int(r["Score"]) < totalHoleScore[count]:
+					totalHoleScore[count] = int(r["Score"])
+				count += 1
+			if count == 18:
+				done += 1
+		count = 0;
+		if rounds["p3"] is not None:
+			for r in rounds["p3"]:
+				if int(r["Score"]) < totalHoleScore[count]:
+					totalHoleScore[count] = int(r["Score"])
+				count += 1
+			if count == 18:
+				done += 1
+		count = 0;
+		if rounds["p4"] is not None:
+			for r in rounds["p4"]:
+				if int(r["Score"]) < totalHoleScore[count]:
+					totalHoleScore[count] = int(r["Score"])
+				count += 1	
+			if count >= 18:
+				done += 1
+		total = 0
+		for i in range(18):
+			total += totalHoleScore[i]	
+		if done == 4:
+			try:
+				p = models.Scores.objects.get(team=instance,tID=tID)
+				if curRound == 2:
+					p.round2 = total
+				elif curRound == 3:
+					p.round3 = total
+				else:
+					p.round4 = total
+				p.save()
+			except:
+				p = models.Scores(team = instance,tID = tID,coursePar=par,round1=total)
+				p.save()
+			instance.roundFin = 1
+			instance.save()
+			
+
+def roundDone(request,instance_id):
+	instance = models.Team.objects.get(id=instance_id)
+	curRound = int(instance.curRound)
+
+	teams = models.Team.objects.filter(league=instance.league)
+	allDone = 1
+	for t in teams:
+		if t.roundFin == 0:
+			allDone = 0
+			break
+	if allDone == 1:
+		for t in teams:
+			t.roundFin = 0
+			t.curRound = curRound + 1
+			t.save()
+
+	return allDone
+		
+		
+
+
+

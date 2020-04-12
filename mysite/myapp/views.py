@@ -287,9 +287,27 @@ def leagueMyTeam(request,instance_id):
 	if team["player4"] is None:
 		pAdd["p4"] = "Add"
 
-	r = 1
-	rounds = api.roundInfo(request,instance, r)
+	swapEligible = None
 
+	if instance.league.activeTourney == 1:
+		api.checkRound(request,instance_id,rounds)
+		if api.roundDone(request,instance) == 1:
+			swapEligible = 1
+		curDate = datetime.datetime.now().date()
+		rDate = None
+		leaderboard = api.leaderboardCached(request,instance.league.tID)
+		for p in leaderboard["Players"]:
+			for ro in p["Rounds"]:
+				if ro["Number"] == instance.curRound:
+					rDate = datetime.datetime.strptime(ro["Day"], '%Y-%m-%dT%H:%M:%S').date()
+					break
+			break
+		if curDate == rDate:
+			swapEligible = None
+			
+	r = instance.curRound
+	rounds = api.roundInfo(request,instance, r)
+			
 	totalHoleScore = api.thScore(rounds)
 
 	totalScore = 0
@@ -313,6 +331,8 @@ def leagueMyTeam(request,instance_id):
 			"rounds":rounds,
 			"tourneys":prevTourney,
 			"curTourney":rounds["tName"],
+			"curRound":r,
+			"open":swapEligible,
 			"totalHoleScore":totalHoleScore,
 			"totalScore":totalScore,
 	}

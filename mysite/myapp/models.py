@@ -39,6 +39,9 @@ class Team(models.Model):
 	player2 = models.IntegerField(null=True)
 	player3 = models.IntegerField(null=True)
 	player4 = models.IntegerField(null=True)
+	roundFin = models.IntegerField(default = 0) # 1 is round finished, 0 is not finished
+	curRound = models.IntegerField(default = 1) 
+
 
 	def __str__(self):
 		return self.teamName
@@ -57,6 +60,7 @@ class CurTourney(models.Model):
 class Scores(models.Model):
 	team = models.ForeignKey(Team, on_delete=models.CASCADE)
 	tID = models.IntegerField()
+	coursePar = models.IntegerField(null=True)
 	round1 = models.IntegerField(null=True)
 	round2 = models.IntegerField(null=True)
 	round3 = models.IntegerField(null=True)

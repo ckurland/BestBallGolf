@@ -10,22 +10,23 @@
 
 
 
-
-<form method="get">
-<label for="tourney">Choose a tournament:</label>
-<select id="tourney" name="tID">
-{% for t in tourneys %}
 <!--
+<form method="get">
+<label for="tourney">Round:</label>
+<select id="round" name="round">
 <option value="{{t.TournamentID }}" <?php if($_POST["tID"] == "{{t.TournamentID}}") {echo 'selected="selected"'; } ?>>{{ t.Name }}</option>
--->
- <option value="{{t.TournamentID }}">{{ t.Name }}</option>
-{% endfor %}
+ <option value="1">1</option>
+ <option value="2">2</option>
+ <option value="3">3</option>
+ <option value="4">4</option>
 </select>
 <input type="submit" value="Submit">
 </form>
+-->
 
 {% if curTourney %}
-<h4>Tournament Shown: {{curTourney}}</h4>
+<h4>Current Tournament: {{curTourney}}</h4>
+<h4>Round: {{curRound}}</h4>
 {% endif %}
 
 <h3>Players</h3>
@@ -37,7 +38,13 @@
 	</tr>
 		<tr align="center">
 			<td>
+				{% if open %}
 				<a href="/players/{{team_id}}/1/" class="button">{{pAdd.p1}}</a>
+				{% endif %}
+				{% if not open %}
+				<a class="button">Locked</a>
+				{% endif %}
+				
 			</td>
 			<td>{{team.player1.FirstName}} {{team.player1.LastName}}</td>
 			<td><table>
@@ -63,7 +70,12 @@
 		</tr>
 		<tr align="center">
 			<td>
+				{% if open %}
 				<a href="/players/{{team_id}}/2/" class="button">{{pAdd.p2}}</a>
+				{% endif %}
+				{% if not open %}
+				<a class="button">Locked</a>
+				{% endif %}
 			</td>
 			<td>{{team.player2.FirstName}} {{team.player2.LastName}}</td>
 			<td><table>
@@ -88,7 +100,12 @@
 		</tr>
 		<tr align="center">
 			<td>
+				{% if open %}
 				<a href="/players/{{team_id}}/3/" class="button">{{pAdd.p3}}</a>
+				{% endif %}
+				{% if not open %}
+				<a class="button">Locked</a>
+				{% endif %}
 			</td>
 			<td>{{team.player3.FirstName}} {{team.player3.LastName}}</td>
 			<td><table>
@@ -113,7 +130,12 @@
 		</tr>
 		<tr align="center">
 			<td>
+				{% if open %}
 				<a href="/players/{{team_id}}/4/" class="button">{{pAdd.p4}}</a>
+				{% endif %}
+				{% if not open %}
+				<a class="button">Locked</a>
+				{% endif %}
 			</td>
 			<td>{{team.player4.FirstName}} {{team.player4.LastName}}</td>
 			<td><table>
