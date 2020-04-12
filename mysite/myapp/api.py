@@ -3,6 +3,7 @@ import datetime
 
 
 from . import keyStore
+from . import models
 
 
 
@@ -257,8 +258,7 @@ def checkRound(request,instance_id,rounds):
 			instance.save()
 			
 
-def roundDone(request,instance_id):
-	instance = models.Team.objects.get(id=instance_id)
+def roundDone(request,instance):
 	curRound = int(instance.curRound)
 
 	teams = models.Team.objects.filter(league=instance.league)

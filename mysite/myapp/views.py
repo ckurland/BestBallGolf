@@ -289,6 +289,10 @@ def leagueMyTeam(request,instance_id):
 
 	swapEligible = None
 
+	r = instance.curRound
+	rounds = api.roundInfo(request,instance, r)
+			
+
 	if instance.league.activeTourney == 1:
 		api.checkRound(request,instance_id,rounds)
 		if api.roundDone(request,instance) == 1:
@@ -304,9 +308,7 @@ def leagueMyTeam(request,instance_id):
 			break
 		if curDate == rDate:
 			swapEligible = None
-			
-	r = instance.curRound
-	rounds = api.roundInfo(request,instance, r)
+		r = instance.curRound
 			
 	totalHoleScore = api.thScore(rounds)
 
