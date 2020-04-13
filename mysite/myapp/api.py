@@ -1,5 +1,8 @@
 import requests
 import datetime
+import os
+import json
+import codecs
 
 
 from . import keyStore
@@ -36,10 +39,18 @@ def leaderboardCached(request,tID):
 	is_cached = ('leaderboard' in request.session)
 	tourney_cached = ('tID' in request.session)
 
+	#for testing
+	path = os.path.dirname(os.path.abspath(__file__))
+	path = path + '/test.json'
+	f = codecs.open(path,'r','utf-8-sig')
+	data = json.load(f)
+	f.close()
+	return data
+
 	if tourney_cached:
 		toID = request.session['tID']
-	
-	if not tourney_cached or toID != str(tID) or not is_cached:
+
+	if not tourney_cached or str(toID) != str(tID) or not is_cached:
 		print("Not Cached Leaderboard")
 		print("Tourney ID: ",str(tID))
 		response = requests.get('https://api.sportsdata.io/golf/v2/json/Leaderboard/%s?key=%s' % (str(tID), keyStore.key))
@@ -126,7 +137,7 @@ def thScore(rounds):
 	return totalHoleScore
 
 
-def roundInfo(request,instance,ro):
+def roundInfo(request,instance,ro,leaderboard):
 	tourney_cached = ('tID' in request.session)
 
 	p1Round = None
@@ -141,24 +152,6 @@ def roundInfo(request,instance,ro):
 	tourneyName = None
 	tID = None
 
-	if 'tID' in request.GET:
-		tID = request.GET['tID']
-	elif tourney_cached:
-		tID = request.session['tID']
-	else:
-		rounds = {
-				"p1":p1Round,
-				"p2":p2Round,
-				"p3":p3Round,
-				"p4":p4Round,
-				"t1":p1r,
-				"t2":p2r,
-				"t3":p3r,
-				"t4":p4r,
-				"tName":tourneyName,
-				}
-		return rounds
-	leaderboard = leaderboardCached(request,tID)
 	tourneyName = leaderboard["Tournament"]["Name"]
 	for p in leaderboard["Players"]:
 		if p["PlayerID"] == instance.player1:
@@ -196,11 +189,10 @@ def roundInfo(request,instance,ro):
 	return rounds
 
 
-def checkRound(request,instance_id,rounds):
+def checkRound(request,instance_id,rounds,leaderboard):
 	instance = models.Team.objects.get(id=instance_id)
 	tID = instance.league.tID
 	curRound = int(instance.curRound)
-	leaderboard = leaderboardCached(request,tID)
 	par = leaderboard["Tournament"]
 	par = int(par["Par"])
 	totalHoleScore = [0] * 18
@@ -270,7 +262,10 @@ def roundDone(request,instance):
 	if allDone == 1:
 		for t in teams:
 			t.roundFin = 0
-			t.curRound = curRound + 1
+			if curRound < 4:
+				t.curRound = curRound + 1
+			else:
+				t.league.activeTourney = 0
 			t.save()
 
 	return allDone

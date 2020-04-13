@@ -221,6 +221,8 @@ def leagueHome(request,instance_id):
 			tm.player2 = None
 			tm.player3 = None
 			tm.player4 = None
+			tm.curRound = 1
+			tm.roundFin = 0
 			tm.save()
 		
 		try:
@@ -244,6 +246,7 @@ def leagueHome(request,instance_id):
 			"league":"/leagueHome/"+ str(instance_id)+"/",
 			#"playersLeague":"/players/"+ str(instance_id)+"/",
 			"myTeamLeague":"/myTeam/"+ str(team.id)+"/",
+			"standingsLeague":"/standings/"+ str(team.id)+"/",
  			"createLeague":"/createLeague/",
  			"joinLeague":"/joinLeague/",
 			"myTeams":"/myTeams/",
@@ -289,17 +292,17 @@ def leagueMyTeam(request,instance_id):
 
 	swapEligible = None
 
+	leaderboard = api.leaderboardCached(request,instance.league.tID)
 	r = instance.curRound
-	rounds = api.roundInfo(request,instance, r)
+	rounds = api.roundInfo(request,instance, r,leaderboard)
 			
 
 	if instance.league.activeTourney == 1:
-		api.checkRound(request,instance_id,rounds)
+		api.checkRound(request,instance_id,rounds,leaderboard)
 		if api.roundDone(request,instance) == 1:
 			swapEligible = 1
 		curDate = datetime.datetime.now().date()
 		rDate = None
-		leaderboard = api.leaderboardCached(request,instance.league.tID)
 		for p in leaderboard["Players"]:
 			for ro in p["Rounds"]:
 				if ro["Number"] == instance.curRound:
@@ -326,6 +329,7 @@ def leagueMyTeam(request,instance_id):
  			"createLeague":"/createLeague/",
  			"joinLeague":"/joinLeague/",
 			"myTeamLeague":"/myTeam/"+ str(instance_id)+"/",
+			"standingsLeague":"/standings/"+ str(instance_id)+"/",
 			"myTeams":"/myTeams/",
 			"team_id":instance_id,
 			"pAdd":pAdd,
@@ -406,6 +410,7 @@ def leagueDraft(request,instance_id,player):
  			"createLeague":"/createLeague/",
  			"joinLeague":"/joinLeague/",
 			"myTeamLeague":"/myTeam/"+ str(instance_id)+"/",
+			"standingsLeague":"/standings/"+ str(instance_id)+"/",
 			"myTeams":"/myTeams/",
 			"player":player,
 			"uPlayers":uPlayers,
@@ -534,6 +539,7 @@ def leaguePlayers(request,instance_id,player,page=0):
  			"createLeague":"/createLeague/",
  			"joinLeague":"/joinLeague/",
 			"myTeamLeague":"/myTeam/"+ str(instance_id)+"/",
+			"standingsLeague":"/standings/"+ str(instance_id)+"/",
 			"myTeams":"/myTeams/",
 			"players":playerData[page*20:(page*20+20)],
 			"page":page,
@@ -587,6 +593,58 @@ def teamDraft_view(request,instance_id):
 	else:
 		return HttpResponse("Unsupported HTTP Method")
 
+
+@login_required(login_url='/login/')
+def leagueStandings(request,instance_id):
+
+	prevTourney = api.prevTourney(request)
+
+	instance = models.Team.objects.get(id=instance_id)
+	stand = {
+			"tourney":[]
+			}
+	teams = models.Team.objects.filter(league=instance.league)
+	for to in prevTourney:
+		vals = {
+				"tName":to["Name"],
+				"team":[],
+				}
+		work = 0
+		for t in teams:
+			try:
+				score = models.Scores.objects.get(team=t,tID=to["TournamentID"])
+				work += 1
+				total = score.round1+score.round2+score.round3+score.round4
+				total = total - (4 * score.coursePar)
+				tval = {
+						"name":t.teamName,
+						"r1":score.round1-score.coursePar,
+						"r2":score.round2-score.coursePar,
+						"r3":score.round3-score.coursePar,
+						"r4":score.round4-score.coursePar,
+						"total":total,
+						}
+				vals["team"] += [tval]
+			except:
+				continue
+		if work != 0:
+			stand["tourney"] += [vals]
+	
+	context = {
+			"title":"Standings",
+			"initialStatement":"Here is where all of the league standings stuff will go.",
+			"login":"/login/",
+ 			"logout":"/logout/",
+			"league":"/leagueHome/"+str(instance.league.id)+"/",
+ 			"createLeague":"/createLeague/",
+ 			"joinLeague":"/joinLeague/",
+			"myTeamLeague":"/myTeam/"+ str(instance_id)+"/",
+			"standingsLeague":"/standings/"+ str(instance_id)+"/",
+			"myTeams":"/myTeams/",
+			"team_id":instance_id,
+			"stand":stand,
+	}
+	return render(request, "league/standings.html", context=context)
 
 def register(request):
 	if request.method == "POST":

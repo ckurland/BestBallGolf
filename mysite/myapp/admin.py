@@ -7,4 +7,5 @@ admin.site.register(models.Site)
 admin.site.register(models.League)
 admin.site.register(models.Team)
 admin.site.register(models.UnavailablePlayers)
+admin.site.register(models.Scores)
 
