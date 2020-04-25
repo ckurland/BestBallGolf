@@ -109,7 +109,7 @@ def createLeague(request):
 
 	context = {
 			"title":"Create League",
-			"opener":"League creation zone",
+			"opener":"League Creation Zone",
 			"initialStatement":"Create your league!!",
 			"login":"/login/",
  			"logout":"/logout/",
