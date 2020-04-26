@@ -12,52 +12,8 @@ from . import forms
 
 from . import api
 
-"""
-playerJson = requests.get('https://api.sportsdata.io/golf/v2/json/Players?key=%s' % keyStore.key)
-playerData = response.json()
-"""
-	
 
 def home(request):
-
-	"""
-	siteJson = models.Site.objects.all().first()
-	if siteJson is None:
-		#playerJson = requests.get('https://api.sportsdata.io/golf/v2/json/Players?key=%s' % keyStore.key)
-		pData = {"the":"one"}
-		#pData = playerJson.json()
-		st = models.Site(playerList = pData)
-		st.save()
-		siteJson = models.Site.objects.all().first()
-
-	playerData = siteJson.playerList
-	"""
-	
-
-	is_cached = ('playerData' in request.session)
-
-	"""
-	if not is_cached:
-		print("Not Cached")
-		response = requests.get('https://api.sportsdata.io/golf/v2/json/Players?key=%s' % keyStore.key)
-		request.session['playerData'] = response.json()
-
-	playerData = request.session['playerData']
-	"""
-	playerData = api.playerCached(request)
-
-
-	player = {}
-
-	if 'first' in request.GET:
-		if 'last' in request.GET:
-			first = request.GET['first']
-			last = request.GET['last']
-			for players in playerData:
-				if players['FirstName'] == first and players['LastName'] == last:
-					player = players
-					break
-
 
 	context = {
 			"title":"Best Ball",
@@ -68,8 +24,6 @@ def home(request):
  			"createLeague":"/createLeague/",
  			"joinLeague":"/joinLeague/",
 			"myTeams":"/myTeams/",
-			"player":player,
-			"is_cached":is_cached,
 	}
 	return render(request, "home.html", context=context)
 
@@ -185,8 +139,9 @@ def leagueHome(request,instance_id):
 	commish = None
 	if request.user == instance.commissioner:
 		commish = 1
-	#instance.activeTourney = 0
-	#instance.save()
+	if 'end' in request.GET:
+		instance.activeTourney = 0
+		instance.save()
 	print(instance.activeTourney)
 	
 	prevTourney = None
@@ -196,8 +151,11 @@ def leagueHome(request,instance_id):
 		if commish == 1:
 			prevTourney = api.prevTourney(request)
 	else:
-		# Want to make it show name not tID, possible function in api.py
-		curTourney = instance.tID
+		tour = api.prevTourney(request)
+		for n in tour:
+			if n["TournamentID"] == int(instance.tID):
+				curTourney = n["Name"]
+				break
 		endDate = instance.endDate
 
 	if 'tID' in request.GET:
@@ -415,6 +373,7 @@ def leagueDraft(request,instance_id,player):
 			"player":player,
 			"uPlayers":uPlayers,
 			"teamID":instance_id,
+			"teamName":instance.teamName,
 	}
 	return render(request, "league/draft.html", context=context)
 

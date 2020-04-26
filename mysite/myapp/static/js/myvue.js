@@ -1,13 +1,17 @@
 
 var instance_id = document.getElementById('tID').value;
+var teamName = document.getElementById('teamName').value;
 //player list
 var app = new Vue({
     el: '#app',
     data: {
       availPlayers: [],
 	  teams: [],
+	  tName: teamName,
       seen:true,
-      unseen:false
+      unseen:false,
+      tseen:true,
+      tunseen:false
     },
     //Adapted from https://stackoverflow.com/questions/36572540/vue-js-auto-reload-refresh-data-with-timer
     created: function() {
@@ -30,8 +34,8 @@ var app = new Vue({
             .get('/teamDraft/'+instance_id+'/')
             .then(response => (this.teams = response.data.teams))
           console.log(this.teams)
-          this.seen=false
-          this.unseen=true
+          this.tseen=false
+          this.tunseen=true
       },
 		
       cancelAutoUpdate: function() { clearInterval(this.timer) }

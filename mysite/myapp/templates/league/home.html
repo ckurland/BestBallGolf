@@ -30,6 +30,9 @@
 {% if curTourney %}
 <h4>Active Tournament: {{curTourney}}</h4>
 <h4>End Date: {{endDate}}</h4>
+<form method="get">
+	<button type="submit" name="end" value=1>End Tournament</button>
+</form>
 {% endif %}
 
 

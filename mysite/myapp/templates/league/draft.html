@@ -10,6 +10,7 @@
 </p>
 
 <param id="tID" value="{{teamID}}">
+<param id="teamName" value="{{teamName}}">
 
 {% if players %}
 
@@ -39,13 +40,15 @@
 
 {% endif %}
 
-<div id="app">
-<div v-if="teams.length > 0">
-<div class="grid-container">
-<div class="grid-x grid-padding-x">
 
+<div id="app"> <!-- 1 -->
 
-<div class="large-8 medium-8 small-6 cell">
+	<div v-if="teams.length > 0"><!-- 2 -->
+		<div class="grid-container"><!-- 3 -->
+		<div class="grid-x grid-padding-x"><!-- 4 -->
+
+		<div class="large-8 medium-8 small-6 cell"><!-- 5 -->
+
 <table id="myTable">
 	<tr>
 		<th></th>
@@ -55,9 +58,15 @@
 		<tr align="center" v-for="p in availPlayers">
     {% verbatim %}
 			<td>
+				<div v-show="tName === teams[0]">
 				<form method="get">
 					<button type="submit" name="pID" v-bind:value="p.PlayerID">Draft</button>
 				</form>
+				</div>
+				<div v-show="tName != teams[0]">
+					<button type="submit">Locked</button>
+				<div>
+				
 <!--
 				<button v-bind:onclick=addPlayer(p.PlayerID)>Draft</button>
 -->
@@ -67,38 +76,45 @@
     {% endverbatim %}
 		</tr>
 </table>
-</div>
 
-<div class="large-4 medium-4 small-6 cell">
-<h4>Draft Order</h4>
-<ul class="list-group">
-  <div v-for="(t,index) in teams">
-    {% verbatim %}
-		<div v-if=" index < 1">
-  		<li class="list-group-item active">{{t}}</li>
+		</div><!-- 5 -->
+
+		<div class="large-4 medium-4 small-6 cell">
+			<h4>Draft Order</h4>
+			<ul class="list-group">
+			  <div v-for="(t,index) in teams">
+			    {% verbatim %}
+					<div v-if=" index < 1">
+		  			<li class="list-group-item active">{{t}}</li>
+					</div>
+					<div v-else>
+  					<li class="list-group-item">{{t}}</li>
+					</div>
+			    {% endverbatim %}
+			  </div>
+			</ul>
 		</div>
-		<div v-else>
-  		<li class="list-group-item">{{t}}</li>
+
+		</div><!-- 4 -->
+		</div><!-- 3 -->
+
+		</div><!-- 2 -->
+		<div align="center" v-else>
+			<div align="center" v-if="tseen">
+				<h2>Loading...</h2>
+			</div>
+			<div v-if="tunseen">
+				<h2>The draft has concluded</h2>
+				<form method="get">
+					<button type="submit" name="done" value=1>End Draft</button>
+				</form>
+			</div>
 		</div>
-    {% endverbatim %}
-  </div>
-</ul>
-</div>
 
-</div>
-</div>
-</div>
 
-<div align="center" v-else>
 
-<h2>The draft has concluded</h2>
-<form method="get">
-	<button type="submit" name="done" value=1>End Draft</button>
-</form>
+</div><!-- 1 -->
 
-</div>
-
-</div>
 
 
 
