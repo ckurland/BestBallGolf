@@ -33,7 +33,7 @@
 }
 
 .team {
-  /* color: #fae7b1; */
+  background-color: #faf2e1;
   border: 2px solid black;
 }
 .leagueBanner {
@@ -69,6 +69,16 @@
   color: #fefefe;
   background-color: #1779ba;
   border-color: 1px solid #1779ba;
+}
+
+/* Right Justify login */
+.loginRight {
+	position: absolute;
+	right:0;
+}
+.userRight {
+	position: absolute;
+	right:80px;
 }
 
 

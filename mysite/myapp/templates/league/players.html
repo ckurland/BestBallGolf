@@ -3,53 +3,23 @@
 
 {% block content %}
 
-<h1>{{ opener }}</h1>
+<h1 class="text-center">{{ opener }}</h1>
 
-<p>
+<p class="text-center">
 {{ initialStatement }}
 </p>
 
-<param id="lID" value="{{teamID}}">
-
-{% if players %}
-<!--
-<h3>Search for a player</h3>
-<form method="get">
-	First Name:<input type="text" name="first">
-	Last Name:<input type="text" name="last">
-	<button type="submit">search</button>
-</form>
--->
-<!--
-<table id="myTable">
-	<tr>
-		<th></th>
-		<th>Name</th>
-		<th>World Rank</th>
-	</tr>
-	{% for player in players %}
-		{% if player.PlayerID not in uPlayers %}
-		<tr align="center">
-			<td>
-				<form method="get">
-					<button type="submit" name="pID" value={{player.PlayerID}}>add</button>
-				</form>
-			</td>
-			<td >{{player.Name}}</td>
-			<td >{{player.WorldGolfRank}}</td>
-		</tr>
-		{% endif %}
-	{% endfor %}
-</table>
-
--->
-
-<p><a href="{{prevPage}}" class="button">Prev</a> <a href="{{nextPage}}" class="button">Next</a> </p>
-
-{% endif %}
+<param id="tID" value="{{teamID}}">
+<param id="teamName" value="{{teamName}}">
 
 
-<div id="app">
+<div id="app"> <!-- 1 -->
+
+		<div class="grid-container"><!-- 2 -->
+		<div class="grid-x grid-padding-x"><!-- 3 -->
+
+		<div class="large-8 medium-8 small-12 large-offset-2 medium-offset-2 cell"><!-- 4 -->
+
 <table id="myTable">
 	<tr>
 		<th></th>
@@ -60,15 +30,22 @@
     {% verbatim %}
 			<td>
 				<form method="get">
-					<button type="submit" name="pID" value={{p.PlayerID}}>add</button>
+					<button type="submit" name="pID" v-bind:value="p.PlayerID">Add</button>
 				</form>
+				
 			</td>
 			<td >{{p.Name}}</td>
 			<td >{{p.WorldGolfRank}}</td>
     {% endverbatim %}
 		</tr>
 </table>
-</div>
+
+		</div><!-- 4 -->
+
+		</div><!-- 3 -->
+		</div><!-- 2 -->
+
+</div><!-- 1 -->
 
 
 

@@ -55,9 +55,9 @@ def createLeague(request):
 			form_instance = forms.LeagueForm(request.POST,request.FILES)
 			if form_instance.is_valid():
 				new_leag = form_instance.save(request=request)
-				return redirect("/")
+				return redirect("/createTeam/"+str(new_leag.id)+"/")
 		else:
-			return redirect("/")
+			return redirect("/login/")
 	else:
 		form_instance = forms.LeagueForm()
 
@@ -418,31 +418,15 @@ def addPlayer(request,teamID,pID):
 	#return redirect("/myTeam/"+str(instance_id)+"/")
 	return HttpResponse("Player Added")
 
+
 @login_required(login_url='/login/')
-def leaguePlayers(request,instance_id,player,page=0):
-	#instance = models.League.objects.get(id=instance_id)
+def leaguePlayers(request,instance_id,player):
 	instance = models.Team.objects.get(id=instance_id)
-	#team = models.Team.objects.get(owner=request.user,league=instance)
 
 	playerData = api.wgrCached(request)
-	#playerData = api.playerCached(request)
-	
-
-	#Comment out from here 
-	players = [{}]
-
-	if 'first' in request.GET or 'last' in request.GET:
-		first = request.GET['first']
-		last = request.GET['last']
-		for player in playerData:
-			if player['FirstName'] == first or player['LastName'] == last:
-				players += player
-		playerData = players
-	#Comment out to here
-
 	if 'pID' in request.GET:
 		pID = request.GET['pID']
-		if player == 1:
+		if instance.player1 == None:
 			try:
 				models.UnavailablePlayers.objects.get(league=instance.league,playerID=instance.player1).delete()
 			except:
@@ -450,8 +434,8 @@ def leaguePlayers(request,instance_id,player,page=0):
 			instance.player1 = pID
 			p = models.UnavailablePlayers(playerID = pID,league=instance.league)
 			p.save()
-		
-		if player == 2:
+			
+		elif instance.player2 == None:
 			try:
 				models.UnavailablePlayers.objects.get(league=instance.league,playerID=instance.player2).delete()
 			except:
@@ -459,7 +443,7 @@ def leaguePlayers(request,instance_id,player,page=0):
 			instance.player2 = pID
 			p = models.UnavailablePlayers(playerID = pID,league=instance.league)
 			p.save()
-		if player == 3:
+		elif instance.player3 == None:
 			try:
 				models.UnavailablePlayers.objects.get(league=instance.league,playerID=instance.player3).delete()
 			except:
@@ -467,7 +451,7 @@ def leaguePlayers(request,instance_id,player,page=0):
 			instance.player3 = pID
 			p = models.UnavailablePlayers(playerID = pID,league=instance.league)
 			p.save()
-		if player == 4:
+		else:
 			try:
 				models.UnavailablePlayers.objects.get(league=instance.league,playerID=instance.player4).delete()
 			except:
@@ -476,37 +460,26 @@ def leaguePlayers(request,instance_id,player,page=0):
 			p = models.UnavailablePlayers(playerID = pID,league=instance.league)
 			p.save()
 		instance.save()
-		return redirect("/myTeam/"+str(instance_id)+"/")
 
 	uPlayers = list(models.UnavailablePlayers.objects.filter(league=instance.league).values_list('playerID',flat=True))
 
-	nextPage = page +1
-	prevPage = page
-	if page == 0:
-		prevPage = 0
-	else:
-		prevPage = prevPage -1
 
 	context = {
 			"title":"Players",
 			"opener":"Players",
-			"initialStatement":"Here is where all of the available players will reside.",
+			"initialStatement":"Here are all of the available players",
 			"login":"/login/",
  			"logout":"/logout/",
 			"league":"/leagueHome/"+str(instance.league.id)+"/",
-			#"playersLeague":"/players/"+ str(instance_id)+"/",
  			"createLeague":"/createLeague/",
  			"joinLeague":"/joinLeague/",
 			"myTeamLeague":"/myTeam/"+ str(instance_id)+"/",
 			"standingsLeague":"/standings/"+ str(instance_id)+"/",
 			"myTeams":"/myTeams/",
-			"players":playerData[page*20:(page*20+20)],
-			"page":page,
 			"player":player,
 			"uPlayers":uPlayers,
 			"teamID":instance_id,
-			"nextPage":"/players/"+str(instance_id)+"/"+str(player)+"/"+str(nextPage)+"/",
-			"prevPage":"/players/"+str(instance_id)+"/"+str(player)+"/"+str(prevPage)+"/",
+			"teamName":instance.teamName,
 	}
 	return render(request, "league/players.html", context=context)
 

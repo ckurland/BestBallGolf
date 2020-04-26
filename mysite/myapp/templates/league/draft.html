@@ -12,34 +12,6 @@
 <param id="tID" value="{{teamID}}">
 <param id="teamName" value="{{teamName}}">
 
-{% if players %}
-
-<!--
-<table id="myTable">
-	<tr>
-		<th></th>
-		<th>Name</th>
-		<th>World Rank</th>
-	</tr>
-	{% for player in players %}
-		{% if player.PlayerID not in uPlayers %}
-		<tr align="center">
-			<td>
-				<form method="get">
-					<button type="submit" name="pID" value={{player.PlayerID}}>add</button>
-				</form>
-			</td>
-			<td >{{player.Name}}</td>
-			<td >{{player.WorldGolfRank}}</td>
-		</tr>
-		{% endif %}
-	{% endfor %}
-</table>
-
--->
-
-{% endif %}
-
 
 <div id="app"> <!-- 1 -->
 
@@ -67,9 +39,6 @@
 					<button type="submit">Locked</button>
 				<div>
 				
-<!--
-				<button v-bind:onclick=addPlayer(p.PlayerID)>Draft</button>
--->
 			</td>
 			<td >{{p.Name}}</td>
 			<td >{{p.WorldGolfRank}}</td>
