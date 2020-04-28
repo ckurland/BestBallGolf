@@ -20,9 +20,10 @@
 </nav>
 
 <!--{% block title %}Login{% endblock %}-->
+<div class="grid-container tmp">
 <div class="grid-x grid-padding-x">
   <div class="large-4 medium-4 small-12 large-offset-4 medium-offset-4 cell">
-    <h3 class="text-center">Login</h3>
+    <h1 class="text-center">Login</h1>
     <form action="/login/" method="post">
         {% csrf_token %}
 
@@ -36,6 +37,7 @@
         <input type="hidden" name="next" value="{{ request.GET.next }}" />
     </form>
   </div>
+</div>
 </div>
 
 <script src="{% static "js/vendor/jquery.js" %}"></script>
