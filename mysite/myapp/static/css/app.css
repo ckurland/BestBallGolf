@@ -33,7 +33,7 @@
 }
 
 .team {
-  background-color: #faf2e1;
+  background-color: #e6e6e6;
   border: 2px solid black;
 }
 .leagueBanner {
@@ -80,6 +80,21 @@
 	position: absolute;
 	right:80px;
 }
+
+
+.tmp {
+	background-color: #faf2e1;
+	min-height: 100vh;
+}
+
+body {
+	background-color: #badebd;
+}
+
+
+
+
+
 
 
 
