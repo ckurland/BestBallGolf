@@ -91,6 +91,25 @@ body {
 	background-color: #badebd;
 }
 
+.image-resize {
+	width: 35%;
+	max-width: 200px;
+	max-height: 200px;
+}
+.image-resize:after {
+  content: "";
+  display: block;
+  padding-bottom: 100%;
+}
+
+
+.image-teams {
+	width: 35%;
+	height: 100%;
+	max-width: 150px;
+	max-height: 150px;
+}
+
 
 
 

@@ -17,8 +17,8 @@ def home(request):
 
 	context = {
 			"title":"Best Ball",
-			"opener":"Welcome to the Golf Best Ball Site",
-			"initialStatement":" This is the beginnings of the best ball fantasy site",
+			"opener":"Welcome to the Best Ball Golf Site",
+			"initialStatement":"",
 			"login":"/login/",
  			"logout":"/logout/",
  			"createLeague":"/createLeague/",
@@ -214,6 +214,7 @@ def leagueHome(request,instance_id):
 			"commish":commish,
 			"draft":draft,
 			"team_id":team.id,
+			"img":'media/'+str(instance.leagueImage),
 	}
 	return render(request, "league/home.html", context=context)
 
@@ -279,11 +280,9 @@ def leagueMyTeam(request,instance_id):
 	
 	context = {
 			"title":"My Team",
-			"initialStatement":"Here is where all of the team stuff will go.",
 			"login":"/login/",
  			"logout":"/logout/",
 			"league":"/leagueHome/"+str(instance.league.id)+"/",
-			#"playersLeague":"/players/"+ str(instance.league.id)+"/",
  			"createLeague":"/createLeague/",
  			"joinLeague":"/joinLeague/",
 			"myTeamLeague":"/myTeam/"+ str(instance_id)+"/",
@@ -299,6 +298,7 @@ def leagueMyTeam(request,instance_id):
 			"open":swapEligible,
 			"totalHoleScore":totalHoleScore,
 			"totalScore":totalScore,
+			"img":'media/'+str(instance.teamImage),
 	}
 	return render(request, "league/myTeam.html", context=context)
 

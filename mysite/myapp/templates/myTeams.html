@@ -18,6 +18,9 @@
 	{% for o in teamList %}
 		<a href="{{ league }}{{o.leagueID}}">
 		<div class="team">
+<!--
+			<img class="image-teams" src={{BASE_DIR}}/media/{{ o.teamImage }}>
+-->
 			<h4>Team Name: {{ o.teamName }}</h4>
 			<h4>League Name: {{ o.leagueName }}</h4>
 		</div>
