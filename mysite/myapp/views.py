@@ -364,7 +364,6 @@ def leagueDraft(request,instance_id,player):
 			"login":"/login/",
  			"logout":"/logout/",
 			"league":"/leagueHome/"+str(instance.league.id)+"/",
-			#"playersLeague":"/players/"+ str(instance_id)+"/",
  			"createLeague":"/createLeague/",
  			"joinLeague":"/joinLeague/",
 			"myTeamLeague":"/myTeam/"+ str(instance_id)+"/",
@@ -490,14 +489,23 @@ def availPlayers_view(request,instance_id):
 		playerData = api.wgrCached(request)
 		instance = models.Team.objects.get(id=instance_id)
 		uPlayers = list(models.UnavailablePlayers.objects.filter(league=instance.league).values_list('playerID',flat=True))
+
+		leaderboard = api.leaderboardCached(request,instance.league.tID)
+		activePlayers = leaderboard["Players"]
+
 		players_list = {"availPlayers":[]}
 		for p in playerData:
 			valid = 1
 			for u in uPlayers:
 				if p["PlayerID"] == u:
 					valid = 0
+			
+
 			if valid == 1:
-				players_list["availPlayers"] += [p]
+				for t in activePlayers:
+					if t["PlayerID"] == p["PlayerID"]:
+						players_list["availPlayers"] += [p]
+						break
 		return JsonResponse(players_list)
 	else:
 		return HttpResponse("Unsupported HTTP Method")

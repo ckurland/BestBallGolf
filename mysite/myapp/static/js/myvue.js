@@ -17,7 +17,7 @@ var app = new Vue({
     created: function() {
           this.fetchPlayerList();
           this.fetchTeamList();
-          this.timer = setInterval(this.fetchPlayerList, 10000);
+          this.timer = setInterval(this.fetchPlayerList, 5000); // every 5 seconds
     },
     methods: {
       fetchPlayerList: function() {
