@@ -41,7 +41,7 @@ def leaderboardCached(request,tID):
 
 	#for testing
 	path = os.path.dirname(os.path.abspath(__file__))
-	path = path + '/test.json'
+	path = path + '/full_tourney.json'
 	f = codecs.open(path,'r','utf-8-sig')
 	data = json.load(f)
 	f.close()
