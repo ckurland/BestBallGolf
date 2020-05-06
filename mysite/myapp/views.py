@@ -279,6 +279,8 @@ def leagueMyTeam(request,instance_id):
 			swapEligible = 1
 		else:
 			swapEligible = None
+		print(curDate)
+		print(rDate)
 
 		r = instance.curRound
 			
