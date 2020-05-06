@@ -42,6 +42,7 @@ def leaderboardCached(request,tID):
 	#for testing
 	path = os.path.dirname(os.path.abspath(__file__))
 	path = path + '/full_puerto.json'
+	#path = path + '/tourney_rd_1_puerto.json'
 	f = codecs.open(path,'r','utf-8-sig')
 	data = json.load(f)
 	f.close()
@@ -272,6 +273,7 @@ def roundDone(request,instance):
 				t.curRound = curRound + 1
 			else:
 				t.league.activeTourney = 0
+				t.league.save()
 			t.save()
 
 	return allDone

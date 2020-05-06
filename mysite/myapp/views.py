@@ -275,9 +275,11 @@ def leagueMyTeam(request,instance_id):
 			if ro["Number"] == instance.curRound:
 				rDate = datetime.datetime.strptime(ro["Day"], '%Y-%m-%dT%H:%M:%S').date()
 				break
-
-		if curDate == rDate:
+		if curDate < rDate:
+			swapEligible = 1
+		else:
 			swapEligible = None
+
 		r = instance.curRound
 			
 	totalHoleScore = api.thScore(rounds)
@@ -437,7 +439,7 @@ def leaguePlayers(request,instance_id,player):
 	playerData = api.wgrCached(request)
 	if 'pID' in request.GET:
 		pID = request.GET['pID']
-		if instance.player1 == None:
+		if int(player) == 1:
 			try:
 				models.UnavailablePlayers.objects.get(league=instance.league,playerID=instance.player1).delete()
 			except:
@@ -446,7 +448,7 @@ def leaguePlayers(request,instance_id,player):
 			p = models.UnavailablePlayers(playerID = pID,league=instance.league)
 			p.save()
 			
-		elif instance.player2 == None:
+		elif int(player) == 2:
 			try:
 				models.UnavailablePlayers.objects.get(league=instance.league,playerID=instance.player2).delete()
 			except:
@@ -454,7 +456,7 @@ def leaguePlayers(request,instance_id,player):
 			instance.player2 = pID
 			p = models.UnavailablePlayers(playerID = pID,league=instance.league)
 			p.save()
-		elif instance.player3 == None:
+		elif int(player) == 3:
 			try:
 				models.UnavailablePlayers.objects.get(league=instance.league,playerID=instance.player3).delete()
 			except:
@@ -471,6 +473,7 @@ def leaguePlayers(request,instance_id,player):
 			p = models.UnavailablePlayers(playerID = pID,league=instance.league)
 			p.save()
 		instance.save()
+		return redirect("/myTeam/"+str(instance_id)+"/")
 
 	uPlayers = list(models.UnavailablePlayers.objects.filter(league=instance.league).values_list('playerID',flat=True))
 
