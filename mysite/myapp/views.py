@@ -262,12 +262,20 @@ def leagueMyTeam(request,instance_id):
 			swapEligible = 1
 		curDate = datetime.datetime.now().date()
 		rDate = None
+		"""
 		for p in leaderboard["Players"]:
 			for ro in p["Rounds"]:
 				if ro["Number"] == instance.curRound:
 					rDate = datetime.datetime.strptime(ro["Day"], '%Y-%m-%dT%H:%M:%S').date()
 					break
 			break
+		"""
+		p = leaderboard["Tournament"]
+		for ro in p["Rounds"]:
+			if ro["Number"] == instance.curRound:
+				rDate = datetime.datetime.strptime(ro["Day"], '%Y-%m-%dT%H:%M:%S').date()
+				break
+
 		if curDate == rDate:
 			swapEligible = None
 		r = instance.curRound
@@ -277,6 +285,9 @@ def leagueMyTeam(request,instance_id):
 	totalScore = 0
 	for t in range(18):
 		totalScore += totalHoleScore[t]
+	par = leaderboard["Tournament"]
+	par = int(par["Par"])
+	toPar = totalScore - par
 	
 	context = {
 			"title":"My Team",
@@ -298,6 +309,7 @@ def leagueMyTeam(request,instance_id):
 			"open":swapEligible,
 			"totalHoleScore":totalHoleScore,
 			"totalScore":totalScore,
+			"toPar":toPar,
 			"img":'media/'+str(instance.teamImage),
 	}
 	return render(request, "league/myTeam.html", context=context)

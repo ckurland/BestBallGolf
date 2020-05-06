@@ -41,7 +41,7 @@ def leaderboardCached(request,tID):
 
 	#for testing
 	path = os.path.dirname(os.path.abspath(__file__))
-	path = path + '/full_tourney.json'
+	path = path + '/full_puerto.json'
 	f = codecs.open(path,'r','utf-8-sig')
 	data = json.load(f)
 	f.close()
@@ -174,6 +174,8 @@ def roundInfo(request,instance,ro,leaderboard):
 				if r["Number"] == ro:
 					p4r = r["Score"]
 					p4Round = r["Holes"]
+	par = leaderboard["Tournament"]
+	par = int(par["Par"])
 
 	rounds = {
 			"p1":p1Round,
@@ -184,6 +186,10 @@ def roundInfo(request,instance,ro,leaderboard):
 			"t2":p2r,
 			"t3":p3r,
 			"t4":p4r,
+			"t1p":p1r-par,
+			"t2p":p2r-par,
+			"t3p":p3r-par,
+			"t4p":p4r-par,
 			"tName":tourneyName,
 			}
 	return rounds
